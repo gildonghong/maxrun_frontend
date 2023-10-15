@@ -1,13 +1,13 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter/material.dart';
 import 'package:photoapp/model/worker.dart';
+import 'package:photoapp/module/photoapp/screens/list_screen.dart';
 import 'package:photoapp/service/login_service.dart';
 
-import 'screens/agent_main_screen.dart';
-import 'screens/agent_login_screen.dart';
+import 'screens/app_login_screen.dart';
 
-class AgentApp extends StatelessWidget {
+class PhotoApp extends StatelessWidget {
 
 
   // This widget is the root of your application.
@@ -24,7 +24,9 @@ class AgentApp extends StatelessWidget {
         Locale('ko'),
         Locale('en'),
       ],
+      themeMode: ThemeMode.light,
       theme: ThemeData(
+        // scaffoldBackgroundColor: Colors.black,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
         dialogTheme: DialogTheme(
@@ -34,6 +36,7 @@ class AgentApp extends StatelessWidget {
         //       borderRadius: BorderRadius.circular(12))
         // ),
         filledButtonTheme: FilledButtonThemeData(style: FilledButton.styleFrom(
+          padding: EdgeInsets.all(8),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8))
         )),
@@ -58,7 +61,7 @@ class AgentApp extends StatelessWidget {
           initialData: null,
           builder: (context, snapshot) {
             final user = snapshot.data;
-            return user == null ? AgentLoginScreen() : AgentMainScreen();
+            return user == null ? AppLoginScreen() : ListScreen();
           }),
       builder: EasyLoading.init(),
     );

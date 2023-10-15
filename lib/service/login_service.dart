@@ -35,8 +35,7 @@ class LoginService{
 
     worker.value =
     Worker(departmentName: "맥스런", managerYn: "Y", uRtoken: "", workerNo: 1, os: "", iss: "", ipAddress: "", loginDate: 1, userAgent: "", repairShopNo: 1, osVersion: "", uAtoken: "", departmentNo: 1, wokerName: "맥스런", position: "관리자", exp: 1, iat: 1, jti: "", repairShopName: "맥스런", mobileYn: "N");
-
-    EasyLoading.showSuccess("로그인 되었습니다.");
+    EasyLoading.dismiss();
   }
 
   void logout() {

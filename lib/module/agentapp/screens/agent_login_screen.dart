@@ -2,12 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:photoapp/service/login_service.dart';
 
-class LoginScreen extends StatefulWidget {
+class AgentLoginScreen extends StatefulWidget {
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<AgentLoginScreen> createState() => _AgentLoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _AgentLoginScreenState extends State<AgentLoginScreen> {
   final formKey = GlobalKey<FormState>();
   String? id = "";
   String? pw = "";

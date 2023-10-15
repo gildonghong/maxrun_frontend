@@ -55,6 +55,9 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   file_picker: ^6.0.0
+  image_picker: ^1.0.4
+  group_grid_view: ^1.0.1
+  simple_grouped_listview: ^2.0.0
 
 dev_dependencies:
   flutter_test:
