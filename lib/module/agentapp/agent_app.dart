@@ -1,8 +1,10 @@
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
-import 'package:photoapp/model/worker.dart';
-import 'package:photoapp/service/login_service.dart';
+import 'package:photoapp/model/user.dart';
+import 'package:photoapp/service/department_service.dart';
+import 'package:photoapp/service/user_service.dart';
+import 'package:rxdart/rxdart.dart';
 
 import 'screens/agent_main_screen.dart';
 import 'screens/agent_login_screen.dart';
@@ -34,6 +36,8 @@ class AgentApp extends StatelessWidget {
         //       borderRadius: BorderRadius.circular(12))
         // ),
         filledButtonTheme: FilledButtonThemeData(style: FilledButton.styleFrom(
+            minimumSize: Size(60, 48),
+            padding: EdgeInsets.all(8),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8))
         )),
@@ -53,8 +57,8 @@ class AgentApp extends StatelessWidget {
         ),
       ),
       // home:ConsoleMainScreen(),
-      home: StreamBuilder<Worker?>(
-          stream: LoginService().worker,
+      home: StreamBuilder<User?>(
+          stream: UserService().user,
           initialData: null,
           builder: (context, snapshot) {
             final user = snapshot.data;

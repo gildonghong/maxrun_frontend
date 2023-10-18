@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:photoapp/model/worker.dart';
+import 'package:photoapp/model/user.dart';
 import 'package:photoapp/module/photoapp/screens/list_screen.dart';
-import 'package:photoapp/service/login_service.dart';
+import 'package:photoapp/service/user_service.dart';
 
 import 'screens/app_login_screen.dart';
 
@@ -13,6 +13,7 @@ class PhotoApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    const primary = Colors.black87;
     return MaterialApp(
       title: 'Lotails Admin',
       localizationsDelegates: [
@@ -27,7 +28,8 @@ class PhotoApp extends StatelessWidget {
       themeMode: ThemeMode.light,
       theme: ThemeData(
         // scaffoldBackgroundColor: Colors.black,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        colorScheme: ColorScheme.light(primary: primary, secondary: primary),
+        // colorScheme: ColorScheme.light(primary: Colors.black.withOpacity(0.8), secondary: Colors.red),
         useMaterial3: true,
         dialogTheme: DialogTheme(
             titleTextStyle: TextStyle(fontSize: 16, color: Colors.black87)),
@@ -36,6 +38,7 @@ class PhotoApp extends StatelessWidget {
         //       borderRadius: BorderRadius.circular(12))
         // ),
         filledButtonTheme: FilledButtonThemeData(style: FilledButton.styleFrom(
+            minimumSize: Size(60, 48),
           padding: EdgeInsets.all(8),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8))
@@ -56,8 +59,8 @@ class PhotoApp extends StatelessWidget {
         ),
       ),
       // home:ConsoleMainScreen(),
-      home: StreamBuilder<Worker?>(
-          stream: LoginService().worker,
+      home: StreamBuilder<User?>(
+          stream: UserService().user,
           initialData: null,
           builder: (context, snapshot) {
             final user = snapshot.data;

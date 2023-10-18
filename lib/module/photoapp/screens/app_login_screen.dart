@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:photoapp/service/login_service.dart';
+import 'package:photoapp/service/user_service.dart';
 
 class AppLoginScreen extends StatefulWidget {
   @override
@@ -9,16 +9,17 @@ class AppLoginScreen extends StatefulWidget {
 
 class _AppLoginScreenState extends State<AppLoginScreen> {
   final formKey = GlobalKey<FormState>();
-  String? id = "";
-  String? pw = "";
+  String id = "";
+  String pw = "";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // backgroundColor: Color(0xFFD10F1A),
       body: Container(
         alignment: Alignment.center,
         decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
+            // color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(12)),
         // color: Theme.of(context).scaffoldBackgroundColor,
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
@@ -29,32 +30,32 @@ class _AppLoginScreenState extends State<AppLoginScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text("MAXRUN", style: TextStyle(fontSize: 40, fontWeight: FontWeight.w800)),
-                  SizedBox(height: 24),
+                  // Text("MAXRUN", style: TextStyle(fontSize: 40, fontWeight: FontWeight.w800))
+                  Image.asset("assets/maxrun.jpg",width: 200,),
+                  SizedBox(height: 48),
                   TextFormField(
-                    initialValue: kDebugMode ? "maxrun" : null,
+                    textInputAction: TextInputAction.next,
+                    initialValue: kDebugMode ? "loginId1" : null,
                     autofocus: true,
                     decoration: InputDecoration(labelText: "아이디"),
                     onSaved: (newValue) {
-                      id = newValue;
+                      id = newValue ?? "";
                     },
                     validator: (value) {
                       if (value?.isNotEmpty != true) {
                         return "아이디를 입력하세요";
                       }
                     },
-                    onFieldSubmitted: (value) {
-                      submit();
-                    },
                   ),
                   SizedBox(height: 12),
                   TextFormField(
-                    initialValue: kDebugMode ? "maxrun" : null,
+                    textInputAction: TextInputAction.go,
+                    initialValue: kDebugMode ? "loginId1" : null,
 
                     decoration: InputDecoration(labelText: "비밀번호"),
                     obscureText: true,
                     onSaved: (newValue) {
-                      pw = newValue;
+                      pw = newValue ?? "";
                     },
                     validator: (value) {
                       if (value?.isNotEmpty != true) {
@@ -87,7 +88,7 @@ class _AppLoginScreenState extends State<AppLoginScreen> {
   submit() {
     if (formKey.currentState?.validate() == true) {
       formKey.currentState?.save();
-      LoginService().login(id!, pw!);
+      UserService().login(id, pw);
     }
   }
 }

@@ -2,12 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:photoapp/extension/datetime_ext.dart';
-import 'package:photoapp/module/agentapp/screens/worker_grid_form.dart';
-import 'package:photoapp/service/worker_service.dart';
+import 'package:photoapp/model/account.dart';
+import 'package:photoapp/module/agentapp/screens/account_grid_form.dart';
+import 'package:photoapp/service/account_service.dart';
 import 'package:photoapp/ui/grid.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
-import '../../../model/worker.dart';
+import '../../../model/user.dart';
 
 class WorkScreenModel extends DataGridSource {
   bool shouldRecalc = false;
@@ -18,8 +19,8 @@ class WorkScreenModel extends DataGridSource {
 
   String? carNo;
 
-  List<Worker> get list => WorkerService().list.value;
-  late StreamSubscription<List<Worker>> sub;
+  List<Account> get list => AccountService().list.value;
+  late StreamSubscription<List<User>> sub;
   DateTimeRange dateRange = DateTimeRange(start: DateTime.now().toUtc().add(Duration(days: -6)), end: DateTime.now().toUtc());
 
   @override

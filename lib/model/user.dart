@@ -2,12 +2,8 @@
 
 import 'dart:convert';
 
-Worker workerFromJson(String str) => Worker.fromJson(json.decode(str));
-
-String workerToJson(Worker data) => json.encode(data.toJson());
-
-class Worker {
-    Worker({
+class User {
+    User({
         required this.departmentName,
         required this.managerYn,
         required this.uRtoken,
@@ -21,7 +17,7 @@ class Worker {
         required this.osVersion,
         required this.uAtoken,
         required this.departmentNo,
-        required this.wokerName,
+        required this.workerName,
         required this.position,
         required this.exp,
         required this.iat,
@@ -43,7 +39,7 @@ class Worker {
     String osVersion;
     String uAtoken;
     int departmentNo;
-    String wokerName;
+    String workerName;
     String position;
     int exp;
     int iat;
@@ -51,7 +47,7 @@ class Worker {
     String repairShopName;
     String mobileYn;
 
-    factory Worker.fromJson(Map<dynamic, dynamic> json) => Worker(
+    factory User.fromJson(Map<dynamic, dynamic> json) => User(
         departmentName: json["departmentName"],
         managerYn: json["managerYn"],
         uRtoken: json["uRtoken"],
@@ -65,7 +61,7 @@ class Worker {
         osVersion: json["osVersion"],
         uAtoken: json["uAtoken"],
         departmentNo: json["departmentNo"],
-        wokerName: json["wokerName"],
+        workerName: json["workerName"],
         position: json["position"],
         exp: json["exp"],
         iat: json["iat"],
@@ -88,7 +84,7 @@ class Worker {
         "osVersion": osVersion,
         "uAtoken": uAtoken,
         "departmentNo": departmentNo,
-        "wokerName": wokerName,
+        "workerName": workerName,
         "position": position,
         "exp": exp,
         "iat": iat,

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:photoapp/module/agentapp/screens/worker_screen.dart';
+import 'package:photoapp/module/agentapp/screens/account_screen.dart';
 import 'package:photoapp/module/agentapp/screens/notice_screen.dart';
 import 'package:photoapp/module/agentapp/screens/photo_screen.dart';
 import 'package:photoapp/module/agentapp/screens/setting_screen.dart';
 import 'package:photoapp/module/agentapp/screens/repair_screen.dart';
-import 'package:photoapp/service/login_service.dart';
-import 'package:photoapp/model/worker.dart';
+import 'package:photoapp/service/user_service.dart';
+import 'package:photoapp/model/user.dart';
 
 import 'work_screen.dart';
 
@@ -23,7 +23,7 @@ enum menu {
   notice(text: "공지사항", screen: NoticeScreen()),
   repair(text: "사진관리", screen: RepairScreen()),
   setting(text: "환경설정", screen: SettingScreen()),
-  account(text: "계정관리", screen: WorkerScreen()),
+  account(text: "계정관리", screen: AccountScreen()),
   work(text: "실적관리", screen: WorkScreen()),
   ;
 
@@ -95,14 +95,14 @@ class _AgentMainScreenState extends State<AgentMainScreen> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12))),
                 onPressed: () {
-                  LoginService().logout();
+                  UserService().logout();
                 },
-                child: StreamBuilder<Worker?>(
-                  stream: LoginService().worker,
+                child: StreamBuilder<User?>(
+                  stream: UserService().user,
                   initialData: null,
                   builder: (context, snapshot) {
                     return Text(
-                      "${snapshot.data?.wokerName ?? ""} 님\n로그아웃",
+                      "${snapshot.data?.workerName ?? ""} 님\n로그아웃",
                       style: TextStyle(),
                       textAlign: TextAlign.center,
                     );

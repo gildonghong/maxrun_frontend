@@ -3,15 +3,21 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:photoapp/env.dart';
-import 'package:photoapp/model/worker.dart';
-import 'package:photoapp/service/login_service.dart';
+import 'package:photoapp/model/user.dart';
+import 'package:photoapp/service/user_service.dart';
+import 'package:cookie_jar/cookie_jar.dart';
+import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 
 var retryCount = 0;
 final interceptor = InterceptorsWrapper(
   onRequest: (options, handler) async {
     EasyLoading.show();
 
-    // options.headers["Authorization"] = "Bearer $idToken";
+    final token = UserService().token.getValue();
+
+    if( token != "") {
+      options.headers["Authorization"] = "Bearer $token";
+    }
 
     handler.next(options);
   },
@@ -21,30 +27,8 @@ final interceptor = InterceptorsWrapper(
     EasyLoading.dismiss();
   },
   onError: (error, handler) async {
-    EasyLoading.dismiss();
-
-    Worker? worker = LoginService().worker.valueOrNull;
-    RequestOptions? options = error.response?.requestOptions;
-
-    if (error.error == 401 &&
-        worker != null &&
-        options != null &&
-        retryCount < 3) {
-      retryCount++;
-      // await worker.getIdToken(true);
-
-      final opts = Options(
-          method: error.requestOptions.method,
-          headers: error.requestOptions.headers);
-
-      handler.resolve(await api.request(options.path,
-          options: opts,
-          data: options.data,
-          queryParameters: options.queryParameters));
-    } else {
-      EasyLoading.showError("시스템 오류: ${error.response?.data}");
-      handler.next(error);
-    }
+    EasyLoading.showError("시스템 오류가 발생했습니다.");
+    handler.next(error);
   },
 );
 
@@ -53,7 +37,7 @@ class ApiHelper {
     baseUrl: ENV_BASE_URL,
     connectTimeout: Duration(seconds: 1000 * 20),
     receiveTimeout: Duration(seconds: 1000 * 20),
-    contentType: 'application/json',
+    contentType: 'application/x-www-form-urlencoded',
     responseType: ResponseType.json,
     receiveDataWhenStatusError: true,
     validateStatus: (status) => status == 200,
@@ -66,10 +50,12 @@ final Dio api = Dio(ApiHelper.option)
     //   level: Level.basic,
     //   compact: false,
     // ),
+    CookieManager(CookieJar()),
     interceptor,
     LogInterceptor(
         requestBody: true,
-        requestHeader: false,
-        request: false,
-        responseHeader: false)
+        requestHeader: true,
+        request: true,
+        responseHeader: true,
+    responseBody: true)
   ]);

@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:photoapp/service/login_service.dart';
+import 'package:photoapp/service/user_service.dart';
 
 class AgentLoginScreen extends StatefulWidget {
   @override
@@ -87,7 +87,7 @@ class _AgentLoginScreenState extends State<AgentLoginScreen> {
   submit() {
     if (formKey.currentState?.validate() == true) {
       formKey.currentState?.save();
-      LoginService().login(id!, pw!);
+      UserService().login(id!, pw!);
     }
   }
 }

@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:photoapp/module/agentapp/screens/worker_screen_model.dart';
-import 'package:photoapp/service/worker_service.dart';
+import 'package:photoapp/module/agentapp/screens/account_screen_model.dart';
+import 'package:photoapp/service/account_service.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
-class WorkerScreen extends StatefulWidget {
-  const WorkerScreen({super.key});
+class AccountScreen extends StatefulWidget {
+  const AccountScreen({super.key});
 
   @override
-  State<WorkerScreen> createState() => _WorkerScreenState();
+  State<AccountScreen> createState() => _AccountScreenState();
 }
 
-class _WorkerScreenState extends State<WorkerScreen> with AutomaticKeepAliveClientMixin {
+class _AccountScreenState extends State<AccountScreen> with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
-  final model = WorkerScreenModel();
+  final model = AccountScreenModel();
 
   @override
   void dispose() {
@@ -34,10 +34,12 @@ class _WorkerScreenState extends State<WorkerScreen> with AutomaticKeepAliveClie
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        FloatingActionButton(onPressed: (){},child:Icon(Icons.edit) ,),
+        FloatingActionButton(onPressed: (){
+          AccountService().add();
+        },child:Icon(Icons.add) ,),
         SizedBox(height:12),
         FloatingActionButton(onPressed: (){
-          WorkerService().fetch();
+          AccountService().fetch();
         },child:Icon(Icons.refresh) ,),
       ],
     );

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:photoapp/model/worker.dart';
-import 'package:photoapp/module/agentapp/screens/worker_screen_model.dart';
-import 'package:photoapp/service/worker_service.dart';
+import 'package:photoapp/model/account.dart';
+import 'package:photoapp/model/user.dart';
+import 'package:photoapp/module/agentapp/screens/account_screen_model.dart';
+import 'package:photoapp/service/account_service.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import 'work_screen_model.dart';
@@ -106,8 +107,8 @@ class _WorkScreenState extends State<WorkScreen>
   }
 
   Widget worker() {
-    return StreamBuilder<List<Worker>>(
-      stream: WorkerService().list,
+    return StreamBuilder<List<Account>>(
+      stream: AccountService().list,
       initialData: [],
       builder: (context, snapshot) {
         return DropdownButtonFormField(
@@ -119,8 +120,8 @@ class _WorkScreenState extends State<WorkScreen>
               child: Text("전체", style: TextStyle()),
             ),
             ...snapshot.data!.map((e) => DropdownMenuItem(
-                  value: e.wokerName,
-                  child: Text(e.wokerName, style: TextStyle()),
+                  value: e.workerName,
+                  child: Text(e.workerName, style: TextStyle()),
                 ))
           ],
           onChanged: (value) {

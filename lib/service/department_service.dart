@@ -1,19 +1,57 @@
+import 'package:collection/collection.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:photoapp/model/department.dart';
 import 'package:rxdart/subjects.dart';
 
+import 'api_service.dart';
+
 class DepartmentService {
   static final DepartmentService _instance = DepartmentService._();
-
-  DepartmentService._();
 
   factory DepartmentService() {
     return _instance;
   }
 
-  final list = BehaviorSubject<List<Department>>.seeded([
-    Department(departmentNo: 1, name:"최초"),
-    Department(departmentNo: 2, name:"판금"),
-    Department(departmentNo: 3, name:"하체"),
-    Department(departmentNo: 4, name:"도장"),
-  ]);
+  DepartmentService._() {}
+
+  final list = BehaviorSubject<List<Department>>.seeded([]);
+
+  Future<void> fetch() async {
+    final res = await api.get<List<dynamic>>(
+      "/repairshop/department/list",
+    );
+    list.value = res.data!.map((e) => Department.fromJson(e)).toList();
+  }
+
+  // Future delete(Department d) {
+  // }
+
+  Future add(String departmentName) async {
+    final res =
+        await api.post<Map<String, dynamic>>("/repairshop/department", data: {
+      "departmentName": departmentName,
+    });
+    final d = Department.fromJson(res.data!);
+    list.value = list.value..add(d);
+  }
+
+  Future modify(int departmentNo, String departmentName)async {
+    final res =
+    await api.post<Map<String, dynamic>>("/repairshop/department", data: {
+      "departmentNo": departmentNo,
+      "departmentName": departmentName,
+    });
+    final d = Department.fromJson(res.data!);
+    final listValue = list.value;
+    final index = listValue.indexWhere((element) => element.departmentNo == departmentNo);
+
+    if( index > -1) {
+      listValue[index] = d;
+    } else {
+      listValue.add(d);
+    }
+    list.value = listValue;
+  }
 }
+
+List<Department> get departments => DepartmentService().list.value;
