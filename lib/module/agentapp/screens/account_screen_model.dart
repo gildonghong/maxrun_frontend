@@ -23,7 +23,9 @@ class AccountScreenModel extends DataGridSource {
 
   AccountScreenModel() {
     sub = AccountService().list.listen((value) {
-      for (var element in gridFormList) {element.dispose();}
+      for (var element in gridFormList) {
+        element.dispose();
+      }
       gridFormList.clear();
       gridFormList.addAll(value.map((e) => AccountGridForm(account: e)));
       rows = list.map<DataGridRow>((e) {
@@ -47,20 +49,29 @@ class AccountScreenModel extends DataGridSource {
     });
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    for (var element in gridFormList) {
+      element.dispose();
+    }
+    gridFormList.clear();
+  }
+
   List<GridColumn> getColumns() {
     final columns = <GridColumn>[
-      column(columnName: "No",width: 70),
-      column(columnName: "부서",width: 120),
-      column(columnName: "직책",width: 100),
-      column(columnName: "성명",width: 90),
-      column(columnName: "휴대폰",width: 120),
+      column(columnName: "No", width: 70),
+      column(columnName: "부서", width: 120),
+      column(columnName: "직책", width: 100),
+      column(columnName: "성명", width: 90),
+      column(columnName: "휴대폰", width: 120),
       column(columnName: "ID"),
-      column(columnName: "PW",width: 100),
-      column(columnName: "직원사용일",width: 100),
-      column(columnName: "App버전",width: 100),
+      column(columnName: "PW", width: 100),
+      column(columnName: "직원사용일", width: 100),
+      column(columnName: "App버전", width: 100),
       // column(columnName: "작업중사진",width: 100),
-      column(columnName: "상태",width: 100),
-      column(columnName: "저장",width: 80),
+      column(columnName: "상태", width: 100),
+      column(columnName: "저장", width: 80),
     ];
 
     return columns;
@@ -81,50 +92,50 @@ class AccountScreenModel extends DataGridSource {
 
     return DataGridRowAdapter(
         cells: row.getCells().map<Widget>((e) {
-          switch (e.columnName) {
-            case "No":
-              return Center(
-                child: Text(
-                  "${e.value}",
-                  style: TextStyle(),
-                ),
-              );
-            case "부서":
-              return form.department;
-            case "직책":
-              return form.position;
-            case "성명":
-              return form.name;
-            case "휴대폰":
-              return form.phone;
-            case "ID":
-              return form.loginId;
-            case "PW":
-              return form.pw;
-            case "직원사용일":
-              return Center(
-                child: Text(
-                  (e.value as DateTime).yyyyMMdd,
-                  style: TextStyle(),
-                ),
-              );
-            case "App버전":
-              return Center(
-                child: Text(
-                  account.osVersion,
-                  style: TextStyle(),
-                ),
-              );
-            // case "작업중사진":
-            //   return form.workingPhoto;
-            case "상태":
-              return form.status;
-            case "저장":
-              return form.save;
-            default:
-              return Container();
-          }
-        }).toList());
+      switch (e.columnName) {
+        case "No":
+          return Center(
+            child: Text(
+              "${e.value}",
+              style: TextStyle(),
+            ),
+          );
+        case "부서":
+          return form.department;
+        case "직책":
+          return form.position;
+        case "성명":
+          return form.name;
+        case "휴대폰":
+          return form.phone;
+        case "ID":
+          return form.loginId;
+        case "PW":
+          return form.pw;
+        case "직원사용일":
+          return Center(
+            child: Text(
+              e.value==null ? "" :(e.value as DateTime).yyyyMMdd,
+              style: TextStyle(),
+            ),
+          );
+        case "App버전":
+          return Center(
+            child: Text(
+              account.osVersion,
+              style: TextStyle(),
+            ),
+          );
+        // case "작업중사진":
+        //   return form.workingPhoto;
+        case "상태":
+          return form.status;
+        case "저장":
+          return form.save;
+        default:
+          return Container();
+      }
+    }).toList());
     // }
   }
 }

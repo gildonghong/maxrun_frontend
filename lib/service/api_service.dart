@@ -11,7 +11,9 @@ import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 var retryCount = 0;
 final interceptor = InterceptorsWrapper(
   onRequest: (options, handler) async {
-    EasyLoading.show();
+    try{
+      EasyLoading.show();
+    } catch(e){}
 
     final token = UserService().token.getValue();
 
@@ -24,7 +26,9 @@ final interceptor = InterceptorsWrapper(
   onResponse: (e, handler) {
     retryCount = 0;
     handler.next(e);
-    EasyLoading.dismiss();
+    try{
+      EasyLoading.dismiss();
+    }catch(e){}
   },
   onError: (error, handler) async {
     EasyLoading.showError("시스템 오류가 발생했습니다.");

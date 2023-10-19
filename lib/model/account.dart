@@ -31,7 +31,7 @@ class Account {
     int workerNo;
     String os;
     // int regDate;
-    DateTime lastUseDate;
+    DateTime? lastUseDate;
     String osVersion;
     // int regUserId;
     int departmentNo;
@@ -48,7 +48,7 @@ class Account {
         workerNo: json["workerNo"],
         os: json["os"],
         // regDate: json["regDate"],
-        lastUseDate: DateTime.fromMillisecondsSinceEpoch(json["lastUseDate"]),
+        lastUseDate: json["lastUseDate"]==null?null:DateTime.fromMillisecondsSinceEpoch(json["lastUseDate"]),
         osVersion: json["osVersion"],
         // regUserId: json["regUserId"],
         departmentNo: json["departmentNo"],
@@ -66,7 +66,7 @@ class Account {
         "workerNo": workerNo,
         "os": os,
         // "regDate": regDate,
-        "lastUseDate": lastUseDate.millisecondsSinceEpoch,
+        "lastUseDate": lastUseDate?.millisecondsSinceEpoch,
         "osVersion": osVersion,
         // "regUserId": regUserId,
         "departmentNo": departmentNo,
