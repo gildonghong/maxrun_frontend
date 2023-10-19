@@ -14,8 +14,8 @@ class Shop {
         // required this.regUserId,
         // required this.modiUserId,
         // required this.regDate,
-        required this.photoSavePath,
-        required this.repairShopName,
+         this.photoSavePath,
+         this.repairShopName,
         // required this.repairShopEmail,
     });
 
@@ -25,8 +25,8 @@ class Shop {
     // int regUserId;
     // int modiUserId;
     // DateTime regDate;
-    String photoSavePath;
-    String repairShopName;
+    String? photoSavePath;
+    String? repairShopName;
     // String repairShopEmail;
 
     factory Shop.fromJson(Map<dynamic, dynamic> json) => Shop(

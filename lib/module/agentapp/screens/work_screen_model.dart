@@ -19,7 +19,7 @@ class WorkScreenModel extends DataGridSource {
 
   String? carNo;
 
-  List<Account> get list => AccountService().list.value;
+  List<Account> get list => AccountService().accounts.value;
   late StreamSubscription<List<User>> sub;
   DateTimeRange dateRange = DateTimeRange(start: DateTime.now().toUtc().add(Duration(days: -6)), end: DateTime.now().toUtc());
 

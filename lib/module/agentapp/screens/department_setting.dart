@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:photoapp/model/department.dart';
 import 'package:photoapp/service/department_service.dart';
+import 'package:provider/provider.dart';
 
 import 'department_form.dart';
 
@@ -35,22 +36,17 @@ class _DepartmentSettingState extends State<DepartmentSetting> {
   final ScrollController scrollController = ScrollController();
 
   Widget list() {
-    return StreamBuilder<List<Department>>(
-        stream: DepartmentService().list,
-        initialData: [],
-        builder: (context, snapshot) {
-          final list = snapshot.data!;
-          return ListView.separated(
-            controller: scrollController,
-            itemCount: list.length,
-            itemBuilder: (BuildContext context, int index) {
-              return DepartmentListForm(department: list[index]);
-            },
-            separatorBuilder: (BuildContext context, int index) {
-              return SizedBox(height: 8);
-            },
-          );
-        });
+    final departments = context.watch<List<Department>>();
+    return ListView.separated(
+      controller: scrollController,
+      itemCount: departments.length,
+      itemBuilder: (BuildContext context, int index) {
+        return DepartmentListForm(department: departments[index]);
+      },
+      separatorBuilder: (BuildContext context, int index) {
+        return SizedBox(height: 8);
+      },
+    );
   }
 
   final departmentNameController = TextEditingController();
@@ -84,7 +80,7 @@ class _DepartmentSettingState extends State<DepartmentSetting> {
   }
 
   submitAdd() async {
-    if (DepartmentService().list.value.firstWhereOrNull((element) =>
+    if (DepartmentService().departments.value.firstWhereOrNull((element) =>
             element.departmentName == departmentNameController.text) !=
         null) {
       EasyLoading.showError("부서명 중복입니다.");

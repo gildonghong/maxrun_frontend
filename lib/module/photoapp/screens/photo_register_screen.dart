@@ -5,9 +5,10 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photoapp/model/department.dart';
-import 'package:photoapp/service/care_service.dart';
+import 'package:photoapp/service/car_care_service.dart';
 import 'package:photoapp/service/department_service.dart';
 import 'package:photoapp/service/user_service.dart';
+import 'package:provider/provider.dart';
 
 class PhotoRegisterScreen extends StatefulWidget {
   List<XFile> files;
@@ -74,8 +75,8 @@ class _PhotoRegisterScreenState extends State<PhotoRegisterScreen> {
       return;
     }
 
-    final reqNo = await CareService().enterIn(carLicenseNo!, ownerName, ownerCpNo!, paymentType);
-    await CareService().repair(reqNo, departmentNo, widget.files);
+    final reqNo = await CarCareService().enterIn(carLicenseNo!, ownerName, ownerCpNo!, paymentType);
+    await CarCareService().repair(reqNo, departmentNo, widget.files);
 
     EasyLoading.showSuccess("등록했습니다.");
     Navigator.of(context).pop(true);
@@ -173,11 +174,11 @@ class _PhotoRegisterScreenState extends State<PhotoRegisterScreen> {
   }
 
   Widget departmentField() {
+    final departments = context.watch<List<Department>>();
     return DropdownButtonFormField<int?>(
       // decoration: InputDecoration(labelText: "부서"),
       value: departmentNo,
-      items: DepartmentService()
-          .list
+      items: departments
           .map((e) => DropdownMenuItem(
                 value: e.departmentNo,
                 child: Text(e.departmentName, style: TextStyle()),

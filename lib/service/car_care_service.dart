@@ -2,17 +2,36 @@ import 'package:http_parser/http_parser.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:photoapp/model/car_care.dart';
+import 'package:photoapp/service/user_service.dart';
+import 'package:rxdart/rxdart.dart';
 
 import 'api_service.dart';
 
-class CareService {
-  static final _instance = CareService._();
+class CarCareService {
+  static final _instance = CarCareService._();
 
-  factory CareService() {
+  factory CarCareService() {
     return _instance;
   }
 
-  CareService._();
+  final list = BehaviorSubject<List<CarCare>>.seeded([]);
+
+  CarCareService._(){
+    UserService().user.listen((value) {
+      if( value != null) {
+        fetch();
+      } else {
+        list.value = [];
+      }
+    });
+  }
+
+
+  fetch() async {
+    final res = await api.get<List<dynamic>>("/repairshop/carcare/list");
+    list.value = res.data!.map((e) => CarCare.fromJson(e)).toList();
+  }
 
   Future<int> enterIn(String carLicenseNo, String? ownerName, String ownerCpNo,
       String? paymentType) async {
@@ -44,4 +63,5 @@ class CareService {
     final res = await api
         .post<Map<String, dynamic>>("/repairshop/carcare/reqair", data: data);
   }
+
 }

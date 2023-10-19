@@ -31,7 +31,7 @@ class AccountGridForm {
   final pwdFocus = FocusNode();
 
   AccountGridForm({
-    required this.account,
+    required this.account, required List<Department> departments,
   }) {
     edited = Account.fromJson(account.toJson());
     changed.value = account.workerNo == 0;

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:photoapp/extension/datetime_ext.dart';
 import 'package:photoapp/model/account.dart';
 import 'package:photoapp/extension/datetime_ext.dart';
+import 'package:photoapp/model/department.dart';
 import 'package:photoapp/module/agentapp/screens/account_grid_form.dart';
 import 'package:photoapp/service/account_service.dart';
 import 'package:photoapp/ui/grid.dart';
@@ -14,20 +15,20 @@ import '../../../model/user.dart';
 class AccountScreenModel extends DataGridSource {
   bool shouldRecalc = false;
 
-  List<Account> get list => AccountService().list.value;
+  List<Account> get list => AccountService().accounts.value;
   final gridFormList = <AccountGridForm>[];
   late StreamSubscription<List<Account>> sub;
 
   @override
   List<DataGridRow> rows = [];
 
-  AccountScreenModel() {
-    sub = AccountService().list.listen((value) {
+  AccountScreenModel(List<Department> departments) {
+    sub = AccountService().accounts.listen((value) {
       for (var element in gridFormList) {
         element.dispose();
       }
       gridFormList.clear();
-      gridFormList.addAll(value.map((e) => AccountGridForm(account: e)));
+      gridFormList.addAll(value.map((e) => AccountGridForm(account: e, departments:departments)));
       rows = list.map<DataGridRow>((e) {
         return DataGridRow(cells: [
           DataGridCell<int>(columnName: 'No', value: e.workerNo),

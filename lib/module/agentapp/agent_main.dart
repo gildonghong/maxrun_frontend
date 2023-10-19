@@ -10,12 +10,6 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initPreferences();
 
-  if(UserService().user.getValue() != null) {
-    await Future.wait([
-      DepartmentService().fetch(),
-      ShopService().fetch()]);
-  }
-
   runApp(AgentApp());
 }
 

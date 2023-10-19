@@ -8,6 +8,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:photoapp/model/shop.dart';
 import 'package:photoapp/service/api_service.dart';
 import 'package:photoapp/service/shop_service.dart';
+import 'package:provider/provider.dart';
 
 class ShopSettingScreen extends StatefulWidget {
   ShopSettingScreen({super.key});
@@ -22,24 +23,20 @@ class _ShopSettingScreenState extends State<ShopSettingScreen>
   late final photoSavePathController = TextEditingController();
   late final maxrunChargerCpNoController = TextEditingController();
 
-  late StreamSubscription<Shop?> sub;
-
   @override
   bool get wantKeepAlive => true;
 
   @override
   void dispose() {
     super.dispose();
-    sub.cancel();
   }
 
   @override
   void initState() {
     super.initState();
-    sub = ShopService().shop.where((event) => event != null).listen((event) {
-      photoSavePathController.text = event!.photoSavePath;
-      maxrunChargerCpNoController.text = event.maxrunChargerCpNo;
-    });
+    final shop = context.read<Shop?>();
+    photoSavePathController.text = shop?.photoSavePath??"";
+    maxrunChargerCpNoController.text = shop?.maxrunChargerCpNo??"";
   }
 
   @override

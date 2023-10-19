@@ -4,16 +4,17 @@ import 'package:photoapp/model/department.dart';
 import 'package:photoapp/module/photoapp/screens/photo_register_screen.dart';
 import 'package:photoapp/service/department_service.dart';
 import 'package:photoapp/service/user_service.dart';
+import 'package:provider/provider.dart';
 import 'package:simple_grouped_listview/simple_grouped_listview.dart';
 
-class ListScreen extends StatefulWidget {
-  const ListScreen({super.key});
+class CarCaresScreen extends StatefulWidget {
+  const CarCaresScreen({super.key});
 
   @override
-  State<ListScreen> createState() => _ListScreenState();
+  State<CarCaresScreen> createState() => _CarCaresScreenState();
 }
 
-class _ListScreenState extends State<ListScreen> {
+class _CarCaresScreenState extends State<CarCaresScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -208,9 +209,16 @@ class _ListScreenState extends State<ListScreen> {
     );
   }
 
-  var department = UserService().workerDepartment;
+  Department? department;
+
+  @override
+  void initState() {
+    super.initState();
+    department = context.read<Department?>();
+  }
 
   Widget departmentField() {
+    final departments = context.watch<List<Department>>();
     return DropdownButtonFormField<Department?>(
       decoration: InputDecoration(labelText: "부서"),
       value: department,
@@ -224,7 +232,7 @@ class _ListScreenState extends State<ListScreen> {
           value: null,
           child: Text("부서 선택", style: TextStyle()),
         ),
-        ...DepartmentService().list.map((e) => DropdownMenuItem(
+        ...departments.map((e) => DropdownMenuItem(
               value: e,
               child: Text(e.departmentName, style: TextStyle()),
             ))

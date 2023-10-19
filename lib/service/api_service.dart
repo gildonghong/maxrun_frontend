@@ -11,13 +11,13 @@ import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 var retryCount = 0;
 final interceptor = InterceptorsWrapper(
   onRequest: (options, handler) async {
-    try{
+    try {
       EasyLoading.show();
-    } catch(e){}
+    } catch (e) {}
 
-    final token = UserService().token.getValue();
+    final token = UserService().user.getValue()?.uAtoken;
 
-    if( token != "") {
+    if (token?.isNotEmpty == true) {
       options.headers["Authorization"] = "Bearer $token";
     }
 
@@ -26,12 +26,12 @@ final interceptor = InterceptorsWrapper(
   onResponse: (e, handler) {
     retryCount = 0;
     handler.next(e);
-    try{
+    try {
       EasyLoading.dismiss();
-    }catch(e){}
+    } catch (e) {}
   },
   onError: (error, handler) async {
-    EasyLoading.showError("시스템 오류가 발생했습니다.");
+    EasyLoading.showError(error.response?.data ?? "시스템 오류가 발생했습니다.");
     handler.next(error);
   },
 );
@@ -61,5 +61,5 @@ final Dio api = Dio(ApiHelper.option)
         requestHeader: true,
         request: true,
         responseHeader: true,
-    responseBody: true)
+        responseBody: true)
   ]);

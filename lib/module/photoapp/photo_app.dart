@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:photoapp/extension/stream_ext.dart';
+import 'package:photoapp/model/department.dart';
+import 'package:photoapp/model/shop.dart';
 import 'package:photoapp/model/user.dart';
-import 'package:photoapp/module/photoapp/screens/list_screen.dart';
+import 'package:photoapp/module/photoapp/screens/car_cares_screen.dart';
+import 'package:photoapp/service/department_service.dart';
+import 'package:photoapp/service/shop_service.dart';
 import 'package:photoapp/service/user_service.dart';
+import 'package:provider/provider.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:tuple/tuple.dart';
 
 import 'screens/app_login_screen.dart';
 
@@ -59,12 +67,38 @@ class PhotoApp extends StatelessWidget {
         ),
       ),
       // home:ConsoleMainScreen(),
-      home: StreamBuilder<User?>(
-          stream: UserService().user,
-          initialData: null,
+      home: StreamBuilder<Tuple4<User?, List<Department>, Department?, Shop?>>(
+          stream: Rx.combineLatest4(
+              UserService().user.asSubject(),
+              DepartmentService().departments,
+              DepartmentService().userDepartment,
+              ShopService().userShop,
+                  (a, b, c, d) => Tuple4(a, b, c, d)),
+          initialData: Tuple4(null, [], null, null),
           builder: (context, snapshot) {
-            final user = snapshot.data;
-            return user == null ? AppLoginScreen() : ListScreen();
+            final user = snapshot.data!.item1;
+            final departments = snapshot.data!.item2;
+            final userDepartment = snapshot.data!.item3;
+            final userShop = snapshot.data!.item4;
+            return user == null ||
+                departments.isEmpty ||
+                userDepartment == null ||
+                userShop == null
+                ? AppLoginScreen()
+                : MultiProvider(providers: [
+              StreamProvider(
+                  create: (context) => UserService().user.whereNotNull(),
+                  initialData: user),
+              StreamProvider(
+                  create: (context) => DepartmentService().departments,
+                  initialData: departments),
+              StreamProvider(
+                  create: (context) => DepartmentService().userDepartment,
+                  initialData: userDepartment),
+              StreamProvider(
+                  create: (context) => ShopService().userShop,
+                  initialData: userShop),
+            ], child: CarCaresScreen());
           }),
       builder: EasyLoading.init(),
     );

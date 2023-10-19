@@ -108,7 +108,7 @@ class _WorkScreenState extends State<WorkScreen>
 
   Widget worker() {
     return StreamBuilder<List<Account>>(
-      stream: AccountService().list,
+      stream: AccountService().accounts,
       initialData: [],
       builder: (context, snapshot) {
         return DropdownButtonFormField(

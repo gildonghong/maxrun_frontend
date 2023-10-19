@@ -2,6 +2,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:photoapp/extension/stream_ext.dart';
 import 'package:photoapp/model/shop.dart';
 import 'package:photoapp/service/user_service.dart';
 import 'package:rxdart/rxdart.dart';
@@ -15,14 +16,24 @@ class ShopService {
     return _instance;
   }
 
-  ShopService._();
+  final userShop = BehaviorSubject<Shop?>.seeded(null);
 
-  final shop = BehaviorSubject<Shop?>.seeded(null);
+  ShopService._(){
+    UserService().user.listen((value) {
+      if( value == null) {
+        userShop.value = null;
+      } else {
+        fetch(value.repairShopNo);
+      }
+    });
+  }
 
-  Future fetch() async {
+
+  Future<Shop> fetch(int shopNo ) async {
     final res = await api
-        .get("/repairshop/${UserService().user.getValue()?.repairShopNo}");
-    shop.value = Shop.fromJson(res.data!);
+        .get("/repairshop/$shopNo");
+    userShop.value = Shop.fromJson(res.data!);
+    return userShop.value!;
   }
 
   modify(String photoSavedPath, String maxrunChargerCpNo) async {
@@ -31,8 +42,10 @@ class ShopService {
       "maxrunChargerCpNo": maxrunChargerCpNo,
     });
 
-    shop.value = shop.value
-      ?..photoSavePath = photoSavedPath
-      ..maxrunChargerCpNo = maxrunChargerCpNo;
+    if(userShop.hasValue) {
+      userShop.value = userShop.value
+        ?..photoSavePath = photoSavedPath
+        ..maxrunChargerCpNo = maxrunChargerCpNo;
+    }
   }
 }

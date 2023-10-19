@@ -1,4 +1,7 @@
+import 'package:flutter/src/widgets/framework.dart';
 import 'package:photoapp/model/account.dart';
+import 'package:photoapp/model/department.dart';
+import 'package:provider/provider.dart';
 import 'package:rxdart/subjects.dart';
 
 import 'api_service.dart';
@@ -16,14 +19,14 @@ class AccountService {
     fetch();
   }
 
-  final list = BehaviorSubject<List<Account>>.seeded([]);
+  final accounts = BehaviorSubject<List<Account>>.seeded([]);
 
   Future<void> fetch() async {
     final res = await api.get<List<dynamic>>("/repairshop/employee/list",
         queryParameters: {
           "repairShopNo": UserService().user.getValue()?.repairShopNo
         });
-    list.value = res.data!.map((e) => Account.fromJson(e)).toList();
+    accounts.value = res.data!.map((e) => Account.fromJson(e)).toList();
   }
 
   Future<Account> update(Account account) async {
@@ -44,21 +47,23 @@ class AccountService {
     final res = await api.post<Map<String, dynamic>>("/repairshop/employee",
         queryParameters: param);
 
-    account = Account.fromJson(res.data!);
-    final index = list.value
+    if(res.data!=null) {
+      account = Account.fromJson(res.data!);
+    }
+    final index = accounts.value
         .indexWhere((element) => element.workerNo == account.workerNo);
 
     if (index > -1) {
-      list.value = list.value..[index] = account;
+      accounts.value = accounts.value..[index] = account;
     } else {
-      list.value = list.value..add(account);
+      accounts.value = accounts.value..add(account);
     }
 
     return account;
   }
 
-  add() {
-    list.value = list.value
+  add(Department department) {
+    accounts.value = accounts.value
       ..add(Account(
           cpNo: "",
           managerYn: "N",
@@ -67,8 +72,8 @@ class AccountService {
           os: "android",
           lastUseDate: DateTime.now(),
           osVersion: "1.0.0",
-          departmentNo: departments[0].departmentNo,
-          departmentName: departments[0].departmentName,
+          departmentNo: department.departmentNo,
+          departmentName: department.departmentName,
           position: "",
           workerName: "",
           status: "사용중"));
@@ -91,14 +96,17 @@ class AccountService {
     final res = await api.post<Map<String, dynamic>>("/repairshop/employee",
         queryParameters: param);
 
-    account = Account.fromJson(res.data!);
-    final index = list.value
+    if(res.data!=null) {
+      account = Account.fromJson(res.data!);
+    }
+
+    final index = accounts.value
         .indexWhere((element) => element.workerNo == account.workerNo);
 
     if (index > -1) {
-      list.value = list.value..[index] = account;
+      accounts.value = accounts.value..[index] = account;
     } else {
-      list.value = list.value..add(account);
+      accounts.value = accounts.value..add(account);
     }
 
     return account;

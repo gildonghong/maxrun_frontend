@@ -6,6 +6,7 @@ import 'package:photoapp/module/agentapp/screens/setting_screen.dart';
 import 'package:photoapp/module/agentapp/screens/repair_screen.dart';
 import 'package:photoapp/service/user_service.dart';
 import 'package:photoapp/model/user.dart';
+import 'package:provider/provider.dart';
 
 import 'work_screen.dart';
 
@@ -54,6 +55,7 @@ class _AgentMainScreenState extends State<AgentMainScreen> {
   }
 
   Widget menuList() {
+    final user = context.watch<User>()!;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12),
       color: Colors.blue[50],
@@ -97,16 +99,10 @@ class _AgentMainScreenState extends State<AgentMainScreen> {
                 onPressed: () {
                   UserService().logout();
                 },
-                child: StreamBuilder<User?>(
-                  stream: UserService().user,
-                  initialData: null,
-                  builder: (context, snapshot) {
-                    return Text(
-                      "${snapshot.data?.workerName ?? ""} 님\n로그아웃",
-                      style: TextStyle(),
-                      textAlign: TextAlign.center,
-                    );
-                  }
+                child: Text(
+                  "${user.workerName} 님\n로그아웃",
+                  style: TextStyle(),
+                  textAlign: TextAlign.center,
                 )),
           ),
           SizedBox(height: 24),

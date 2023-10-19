@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:photoapp/model/shop.dart';
+import 'package:photoapp/model/user.dart';
 import 'package:photoapp/module/agentapp/screens/department_setting.dart';
 import 'package:photoapp/service/shop_service.dart';
+import 'package:provider/provider.dart';
 
 import 'shop_setting.dart';
 
@@ -27,13 +29,7 @@ class _SettingScreenState extends State<SettingScreen>
         padding: const EdgeInsets.symmetric(vertical: 24.0,horizontal: 16),
         child: Column(
           children: [
-            StreamBuilder<Shop?>(
-              stream: ShopService().shop,
-              initialData: null,
-              builder: (context, snapshot) {
-                return ShopSettingScreen();
-              }
-            ),
+            ShopSettingScreen(),
             SizedBox(height: 32),
             Expanded(child: DepartmentSetting()),
           ],
