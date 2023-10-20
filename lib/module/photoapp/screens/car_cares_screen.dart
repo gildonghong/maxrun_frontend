@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:photoapp/model/car_care.dart';
 import 'package:photoapp/model/department.dart';
+import 'package:photoapp/model/user.dart';
 import 'package:photoapp/module/photoapp/screens/photo_register_screen.dart';
+import 'package:photoapp/service/car_care_service.dart';
 import 'package:photoapp/service/department_service.dart';
 import 'package:photoapp/service/user_service.dart';
 import 'package:provider/provider.dart';
@@ -75,27 +78,24 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
   final pickerOptionFormKey = GlobalKey<FormState>();
   var images =<XFile>[];
 
-  pushRegisterScreen() async {
+  pushRegisterScreen([CarCare? item]) async {
     if(images.isEmpty) {
       return;
     }
-      final registered = await Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) {
-          return PhotoRegisterScreen(
-              department: department!, files: images);
-        },
-      ));
 
-    if( registered) {
-      //화면 갱신해야함
-    }
+    await Navigator.of(context).pushReplacement(MaterialPageRoute(
+      builder: (context) {
+        return PhotoRegisterScreen(
+            department: department!, files: images, carCare: item);
+      },
+    ));
   }
 
-  showPickerOptionDialog() {
+  showPickerOptionDialog([CarCare? item]) {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title: Text("차량 신규 등록", style: TextStyle()),
+              title: Text(item==null?"차량 신규 등록":"부서 사진 추가", style: TextStyle()),
               content: Form(
                 key: pickerOptionFormKey,
                 child: Column(
@@ -114,7 +114,7 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
                     }
 
                     images = await picker.pickMultiImage();
-                    pushRegisterScreen();
+                    pushRegisterScreen(item);
 
                   },
                   icon: Icon(Icons.photo_library),
@@ -129,7 +129,7 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
                         await picker.pickImage(source: ImageSource.camera);
                     if (photo != null) {
                       images = [photo];
-                      pushRegisterScreen();
+                      pushRegisterScreen(item);
                     }
                   },
                   icon: Icon(Icons.camera),
@@ -142,40 +142,48 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
   final ImagePicker picker = ImagePicker();
 
   Widget list() {
-    return GroupedListView.grid(
-      padding: EdgeInsets.symmetric(horizontal: 12),
-      crossAxisSpacing: 4,
-      mainAxisSpacing: 4,
-      itemsAspectRatio: 0.7,
-      items: List<int>.generate(100, (index) => index + 1)
-          .map((e) => DateTime(2023, 10, e))
-          .toList(),
-      itemGrouper: (DateTime i) => "${i.year}년 ${i.month}월",
-      headerBuilder: (context, String month) => Container(
-          alignment: AlignmentDirectional.centerStart,
-          padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-          child: Text(month,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900))),
-      gridItemBuilder: (context, int countInGroup, int itemIndexInGroup,
-              DateTime item, int itemIndexInOriginalList) =>
-          listItem(),
-      crossAxisCount: 2,
+    return StreamBuilder<List<CarCare>>(
+      stream: CarCareService().list,
+      initialData: [],
+      builder: (context, snapshot) {
+        return GroupedListView.grid(
+          padding: EdgeInsets.symmetric(horizontal: 12),
+          crossAxisSpacing: 4,
+          mainAxisSpacing: 4,
+          itemsAspectRatio: 0.7,
+          items: snapshot.data!,
+          itemGrouper: (CarCare i) => i.yyyyMm.replaceAll("-", "년 ") + "월",
+          headerBuilder: (context, String month) => Container(
+              alignment: AlignmentDirectional.centerStart,
+              padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+              child: Text(month,
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900))),
+          gridItemBuilder: (context, int countInGroup, int itemIndexInGroup,
+                  CarCare item, int itemIndexInOriginalList) =>
+              listItem(item),
+          crossAxisCount: 2,
+        );
+      }
     );
   }
 
-  Widget listItem() {
+  Widget listItem(CarCare item) {
+    final user = context.watch<User>();
     return InkWell(
       onTap: () {
-        showPickerOptionDialog();
+        showPickerOptionDialog(item);
       },
       child: Card(
         clipBehavior: Clip.antiAlias,
         child: Stack(
           fit: StackFit.expand,
           children: [
-            Image.asset(
-              "assets/v0.jpeg",
+            Image.network(
+              item.fileSavedPath,
               fit: BoxFit.cover,
+              headers: {
+                "Authorization":"Bearer ${user.uAtoken}",
+              },
             ),
             Column(
               mainAxisSize: MainAxisSize.min,
@@ -185,7 +193,7 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
                   padding: EdgeInsets.only(left: 8, top: 8),
                   color: Colors.black45,
                   width: double.infinity,
-                  child: Text("뉴진스 010.5581.2378",
+                  child: Text("${item.ownerName} ${item.formattedOwnerCpNo}",
                       style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -195,7 +203,7 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
                   padding: EdgeInsets.only(left: 8, bottom: 4),
                   color: Colors.black45,
                   width: double.infinity,
-                  child: Text("19버 1120",
+                  child: Text(item.carLicenseNo,
                       style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w900,

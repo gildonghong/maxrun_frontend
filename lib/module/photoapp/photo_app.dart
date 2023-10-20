@@ -22,46 +22,47 @@ class PhotoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const primary = Colors.black87;
+    final Color secondary = Colors.red[700]!;
     return MaterialApp(
       title: 'Lotails Admin',
-      localizationsDelegates: [
+      localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: [
+      supportedLocales: const [
         Locale('ko'),
         Locale('en'),
       ],
       themeMode: ThemeMode.light,
       theme: ThemeData(
         // scaffoldBackgroundColor: Colors.black,
-        colorScheme: ColorScheme.light(primary: primary, secondary: primary),
+        colorScheme: ColorScheme.light(primary: primary, secondary: secondary),
         // colorScheme: ColorScheme.light(primary: Colors.black.withOpacity(0.8), secondary: Colors.red),
         useMaterial3: true,
-        dialogTheme: DialogTheme(
+        dialogTheme: const DialogTheme(
             titleTextStyle: TextStyle(fontSize: 16, color: Colors.black87)),
         // buttonTheme: ButtonThemeData(
         //   shape: RoundedRectangleBorder(
         //       borderRadius: BorderRadius.circular(12))
         // ),
         filledButtonTheme: FilledButtonThemeData(style: FilledButton.styleFrom(
-            minimumSize: Size(60, 48),
-          padding: EdgeInsets.all(8),
+            minimumSize: const Size(60, 48),
+          padding: const EdgeInsets.all(8),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8))
         )),
         inputDecorationTheme: InputDecorationTheme(
           isDense: true,
           filled: true,
-          labelStyle: TextStyle(fontSize: 18),
-          contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical:12),
+          labelStyle: const TextStyle(fontSize: 18),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical:12),
           floatingLabelBehavior: FloatingLabelBehavior.always,
           fillColor: Colors.black.withOpacity(0.03),
           // floatingLabelStyle: TextStyle(color: Colors.blue, height: 0.5),
-          border: OutlineInputBorder(
+          border: const OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(8.0))),
-          enabledBorder: OutlineInputBorder(
+          enabledBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: Colors.black12),
               borderRadius: BorderRadius.all(Radius.circular(8.0))),
         ),
@@ -74,7 +75,7 @@ class PhotoApp extends StatelessWidget {
               DepartmentService().userDepartment,
               ShopService().userShop,
                   (a, b, c, d) => Tuple4(a, b, c, d)),
-          initialData: Tuple4(null, [], null, null),
+          initialData: const Tuple4(null, [], null, null),
           builder: (context, snapshot) {
             final user = snapshot.data!.item1;
             final departments = snapshot.data!.item2;
@@ -98,7 +99,7 @@ class PhotoApp extends StatelessWidget {
               StreamProvider(
                   create: (context) => ShopService().userShop,
                   initialData: userShop),
-            ], child: CarCaresScreen());
+            ], child: const CarCaresScreen());
           }),
       builder: EasyLoading.init(),
     );

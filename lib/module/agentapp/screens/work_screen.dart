@@ -44,13 +44,13 @@ class _WorkScreenState extends State<WorkScreen>
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16),
       child: Row(
         children: [
-          SizedBox(width: 260, child: term()),
+          SizedBox(width: 240, child: term()),
           SizedBox(width: 8),
-          SizedBox(width: 100, child: worker()),
+          SizedBox(width: 120, child: worker()),
           SizedBox(width: 8),
-          SizedBox(width: 100, child: department()),
+          SizedBox(width: 120, child: department()),
           SizedBox(width: 8),
-          SizedBox(width: 140, child: carNo()),
+          SizedBox(width: 120, child: carNo()),
           SizedBox(width: 8),
           searchButton(),
           SizedBox(width: 8),

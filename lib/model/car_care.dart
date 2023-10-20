@@ -10,56 +10,79 @@ String carCareToJson(CarCare data) => json.encode(data.toJson());
 
 class CarCare {
   String fileName;
-  int repairShopNo;
   String ownerCpNo;
   int workerNo;
-  int fileNo;
-  String fileSavedPath;
   int reqNo;
-  int departmentNo;
+  int regDate;
   int fileGroupNo;
   String carLicenseNo;
   String paymentType;
+  int repairShopNo;
+  String ownerName;
+  int fileNo;
+  String fileSavedPath;
+  int departmentNo;
+  String yyyyMm;
 
   CarCare({
     required this.fileName,
-    required this.repairShopNo,
     required this.ownerCpNo,
     required this.workerNo,
-    required this.fileNo,
-    required this.fileSavedPath,
     required this.reqNo,
-    required this.departmentNo,
+    required this.regDate,
     required this.fileGroupNo,
     required this.carLicenseNo,
     required this.paymentType,
+    required this.repairShopNo,
+    required this.ownerName,
+    required this.fileNo,
+    required this.fileSavedPath,
+    required this.departmentNo,
+    required this.yyyyMm,
   });
+
+  String get formattedOwnerCpNo {
+    switch( ownerCpNo.length) {
+      case 11:
+        return ownerCpNo.substring(0, 3) + "." + ownerCpNo.substring(3, 7) + ownerCpNo.substring(7);
+      case 12:
+        return ownerCpNo.substring(0, 3) + "." + ownerCpNo.substring(3, 6) + ownerCpNo.substring(6);
+      default:
+        return ownerCpNo;
+    }
+  }
 
   factory CarCare.fromJson(Map<String, dynamic> json) => CarCare(
     fileName: json["fileName"],
-    repairShopNo: json["repairShopNo"],
     ownerCpNo: json["ownerCpNo"],
     workerNo: json["workerNo"],
-    fileNo: json["fileNo"],
-    fileSavedPath: json["fileSavedPath"],
     reqNo: json["reqNo"],
-    departmentNo: json["departmentNo"],
+    regDate: json["regDate"],
     fileGroupNo: json["fileGroupNo"],
     carLicenseNo: json["carLicenseNo"],
     paymentType: json["paymentType"],
+    repairShopNo: json["repairShopNo"],
+    ownerName: json["ownerName"],
+    fileNo: json["fileNo"],
+    fileSavedPath: json["fileSavedPath"],
+    departmentNo: json["departmentNo"],
+    yyyyMm: json["yyyyMm"],
   );
 
   Map<String, dynamic> toJson() => {
     "fileName": fileName,
-    "repairShopNo": repairShopNo,
     "ownerCpNo": ownerCpNo,
     "workerNo": workerNo,
-    "fileNo": fileNo,
-    "fileSavedPath": fileSavedPath,
     "reqNo": reqNo,
-    "departmentNo": departmentNo,
+    "regDate": regDate,
     "fileGroupNo": fileGroupNo,
     "carLicenseNo": carLicenseNo,
     "paymentType": paymentType,
+    "repairShopNo": repairShopNo,
+    "ownerName": ownerName,
+    "fileNo": fileNo,
+    "fileSavedPath": fileSavedPath,
+    "departmentNo": departmentNo,
+    "yyyyMm": yyyyMm,
   };
 }

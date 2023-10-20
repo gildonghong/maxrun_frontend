@@ -8,6 +8,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:photoapp/model/shop.dart';
 import 'package:photoapp/service/api_service.dart';
 import 'package:photoapp/service/shop_service.dart';
+import 'package:photoapp/ui/always_disabled_focus_node.dart';
 import 'package:provider/provider.dart';
 
 class ShopSettingScreen extends StatefulWidget {
@@ -128,7 +129,3 @@ class _ShopSettingScreenState extends State<ShopSettingScreen>
   }
 }
 
-class AlwaysDisabledFocusNode extends FocusNode {
-  @override
-  bool get hasFocus => false;
-}

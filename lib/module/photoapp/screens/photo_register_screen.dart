@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:photoapp/model/car_care.dart';
 import 'package:photoapp/model/department.dart';
 import 'package:photoapp/service/car_care_service.dart';
 import 'package:photoapp/service/department_service.dart';
 import 'package:photoapp/service/user_service.dart';
+import 'package:photoapp/ui/always_disabled_focus_node.dart';
 import 'package:provider/provider.dart';
 
 class PhotoRegisterScreen extends StatefulWidget {
@@ -15,8 +17,10 @@ class PhotoRegisterScreen extends StatefulWidget {
 
   Department department;
 
+  CarCare? carCare;
+
   PhotoRegisterScreen(
-      {required this.files, super.key, required this.department});
+      {required this.files, super.key, required this.department, this.carCare});
 
   @override
   State<PhotoRegisterScreen> createState() => _PhotoRegisterScreenState();
@@ -25,12 +29,12 @@ class PhotoRegisterScreen extends StatefulWidget {
 class _PhotoRegisterScreenState extends State<PhotoRegisterScreen> {
   final formKey = GlobalKey<FormState>();
 
-  int? reqNo;
+  late int? reqNo = widget.carCare?.reqNo;
   late int departmentNo = widget.department.departmentNo;
-  String? carLicenseNo;
-  String? ownerName;
-  String? ownerCpNo;
-  String? paymentType;
+  late String? carLicenseNo= widget.carCare?.carLicenseNo;
+  late String? ownerName =widget.carCare?.ownerName;
+  late String? ownerCpNo = widget.carCare?.ownerCpNo;
+  late String? paymentType = widget.carCare?.paymentType;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +62,7 @@ class _PhotoRegisterScreenState extends State<PhotoRegisterScreen> {
                 visible: UserService().isManager,
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 12),
-                  child: payment(),
+                  child: repairType(),
                 ),
               ),
               saveButton(),
@@ -75,11 +79,16 @@ class _PhotoRegisterScreenState extends State<PhotoRegisterScreen> {
       return;
     }
 
-    final reqNo = await CarCareService().enterIn(carLicenseNo!, ownerName, ownerCpNo!, paymentType);
+    final reqNo = await CarCareService().enterIn(
+        reqNo: widget.carCare?.reqNo,
+        carLicenseNo: carLicenseNo!,
+        ownerName: ownerName,
+        ownerCpNo: ownerCpNo!,
+        paymentType: paymentType);
     await CarCareService().repair(reqNo, departmentNo, widget.files);
 
-    EasyLoading.showSuccess("등록했습니다.");
     Navigator.of(context).pop(true);
+    EasyLoading.showSuccess("${widget.department.departmentName}부서 사진을 등록했습니다.");
   }
 
   Widget saveButton() {
@@ -91,12 +100,12 @@ class _PhotoRegisterScreenState extends State<PhotoRegisterScreen> {
         ));
   }
 
-  Widget payment() {
+  Widget repairType() {
     return FormBuilderChoiceChip(
         decoration: InputDecoration(labelText: "수리구분"),
         spacing: 8,
         alignment: WrapAlignment.center,
-        initialValue: null,
+        initialValue: widget.carCare?.paymentType,
         name: "payment",
         validator: (value) {
           if (UserService().isManager && value == null) {
@@ -111,15 +120,22 @@ class _PhotoRegisterScreenState extends State<PhotoRegisterScreen> {
         options: ["보험", "보증", "일반"]
             .map((e) => FormBuilderChipOption(
                   value: e,
-                  child: Text(e, style: TextStyle(color: e==paymentType ? Colors.white:Colors.black87)),
+                  child: Text(e,
+                      style: TextStyle(
+                          color: e == paymentType
+                              ? Colors.white
+                              : Colors.black87)),
                 ))
             .toList());
   }
 
   Widget carLicenseNoField() {
     return TextFormField(
+      initialValue: widget.carCare?.carLicenseNo ?? "",
       textInputAction: TextInputAction.next,
-      decoration: InputDecoration(labelText: "차량 번호 및 차종"),
+      decoration: InputDecoration(
+        labelText: "차량 번호 및 차종",
+      ),
       validator: (value) {
         if (value?.isNotEmpty != true) {
           return "차량 번호 및 차종을 입력하세요";
@@ -133,6 +149,7 @@ class _PhotoRegisterScreenState extends State<PhotoRegisterScreen> {
 
   Widget owner() {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Visibility(
           visible: UserService().isManager,
@@ -141,27 +158,29 @@ class _PhotoRegisterScreenState extends State<PhotoRegisterScreen> {
             child: Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: TextFormField(
-                  textInputAction: TextInputAction.next,
-                  decoration: InputDecoration(labelText: "차주 성명"),
-                  validator: (value) {
-                    if (UserService().isManager && value?.isNotEmpty != true) {
-                      return "차주 성명을 입력하세요.";
-                    }
-                  },
-                  onChanged: (value) {
-                    ownerName = value;
-                  },
-                ),
+                initialValue: widget.carCare?.ownerName ?? "",
+                textInputAction: TextInputAction.next,
+                decoration: InputDecoration(labelText: "차주 성명"),
+                validator: (value) {
+                  if (UserService().isManager && value?.isNotEmpty != true) {
+                    return "차주 성명을 입력하세요.";
+                  }
+                },
+                onChanged: (value) {
+                  ownerName = value;
+                },
+              ),
             ),
           ),
         ),
         Expanded(
             flex: 3,
             child: TextFormField(
+              initialValue: widget.carCare?.ownerCpNo ?? "",
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(labelText: "차주 연락처"),
               validator: (value) {
-    if (value?.isNotEmpty != true) {
+                if (value?.isNotEmpty != true) {
                   return "차주 연락처를 입력하세요";
                 }
               },
@@ -174,20 +193,24 @@ class _PhotoRegisterScreenState extends State<PhotoRegisterScreen> {
   }
 
   Widget departmentField() {
-    final departments = context.watch<List<Department>>();
-    return DropdownButtonFormField<int?>(
-      // decoration: InputDecoration(labelText: "부서"),
-      value: departmentNo,
-      items: departments
-          .map((e) => DropdownMenuItem(
-                value: e.departmentNo,
-                child: Text(e.departmentName, style: TextStyle()),
-              ))
-          .toList(),
-      onChanged: (int? value) {
-        departmentNo = value ?? departmentNo;
-      },
+    return TextFormField(
+      focusNode: AlwaysDisabledFocusNode(),
+      textAlign: TextAlign.center,
+      initialValue: widget.department.departmentName,
     );
+    // return DropdownButtonFormField<int?>(
+    //   // decoration: InputDecoration(labelText: "부서"),
+    //   value: departmentNo,
+    //   items: departments
+    //       .map((e) => DropdownMenuItem(
+    //             value: e.departmentNo,
+    //             child: Text(e.departmentName, style: TextStyle()),
+    //           ))
+    //       .toList(),
+    //   onChanged: (int? value) {
+    //     departmentNo = value ?? departmentNo;
+    //   },
+    // );
   }
 
   Widget images() {

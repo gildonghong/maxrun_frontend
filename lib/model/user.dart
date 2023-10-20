@@ -8,17 +8,17 @@ class User {
         required this.managerYn,
         required this.uRtoken,
         required this.workerNo,
-        required this.os,
+        // required this.os,
         required this.iss,
         required this.ipAddress,
         required this.loginDate,
         required this.userAgent,
         required this.repairShopNo,
-        required this.osVersion,
+        // required this.osVersion,
         required this.uAtoken,
         required this.departmentNo,
         required this.workerName,
-        required this.position,
+        // required this.position,
         required this.exp,
         required this.iat,
         required this.jti,
@@ -30,17 +30,17 @@ class User {
     String managerYn;
     String uRtoken;
     int workerNo;
-    String os;
+    // String os;
     String iss;
     String ipAddress;
     int loginDate;
     String userAgent;
     int repairShopNo;
-    String osVersion;
+    // String osVersion;
     String uAtoken;
     int departmentNo;
     String workerName;
-    String position;
+    // String position;
     int exp;
     int iat;
     String jti;
@@ -52,17 +52,17 @@ class User {
         managerYn: json["managerYn"],
         uRtoken: json["uRtoken"],
         workerNo: json["workerNo"],
-        os: json["os"],
+        // os: json["os"],
         iss: json["iss"],
         ipAddress: json["ipAddress"],
         loginDate: json["loginDate"],
         userAgent: json["userAgent"],
         repairShopNo: json["repairShopNo"],
-        osVersion: json["osVersion"],
+        // osVersion: json["osVersion"],
         uAtoken: json["uAtoken"],
         departmentNo: json["departmentNo"],
         workerName: json["workerName"],
-        position: json["position"],
+        // position: json["position"],
         exp: json["exp"],
         iat: json["iat"],
         jti: json["jti"],
@@ -75,17 +75,17 @@ class User {
         "managerYn": managerYn,
         "uRtoken": uRtoken,
         "workerNo": workerNo,
-        "os": os,
+        // "os": os,
         "iss": iss,
         "ipAddress": ipAddress,
         "loginDate": loginDate,
         "userAgent": userAgent,
         "repairShopNo": repairShopNo,
-        "osVersion": osVersion,
+        // "osVersion": osVersion,
         "uAtoken": uAtoken,
         "departmentNo": departmentNo,
         "workerName": workerName,
-        "position": position,
+        // "position": position,
         "exp": exp,
         "iat": iat,
         "jti": jti,
