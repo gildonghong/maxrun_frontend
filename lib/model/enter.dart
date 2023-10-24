@@ -49,9 +49,9 @@ class Enter {
         memo: (json["memo"] as List<dynamic>? ?? []).map((e)=>Memo.fromJson(e)).toList()
     );
 
-    if( kDebugMode) {
-      enter.clientPath = "/Users/taeuk/Desktop/cars";
-    }
+    // if( kDebugMode) {
+    //   enter.clientPath = "/Users/taeuk/Desktop/cars";
+    // }
 
     return enter;
   }
