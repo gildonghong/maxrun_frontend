@@ -192,7 +192,7 @@ class AccountGridForm {
       nameFocus.requestFocus();
       return;
     }
-    if (edited.cpNo.trim().isEmpty) {
+    if (edited.cpNo?.trim().isNotEmpty!=true) {
       EasyLoading.showError("휴대폰을 입력하세요");
       cpNoFocus.requestFocus();
       return;
@@ -208,7 +208,7 @@ class AccountGridForm {
       return;
     }
 
-    if (edited.cpNo == 0) {
+    if (edited.workerNo == 0) {
       await AccountService().create(edited);
     } else {
       await AccountService().update(edited);

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:darty_json/darty_json.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:photoapp/extension/datetime_ext.dart';
 import 'package:photoapp/model/notice.dart';
 import 'package:photoapp/ui/grid.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
@@ -29,16 +30,12 @@ class NoticeScreenModel extends DataGridSource {
     // final res = await api.get<List<dynamic>>("/notice/list", );
     // list = Json.fromList(res.data!).listOfValue((p0) => Notice.fromJson(p0)).toList();
 
-    if(kDebugMode && list.isEmpty) {
-      list.add(Notice(noticeNo: 1, notice: "맥스런 리뉴얼 런칭", regDate: "2023-10-14"));
-    }
-
     rows = list.map<DataGridRow>((e) {
       return DataGridRow(cells: [
         DataGridCell<int>(columnName: 'No', value: e.noticeNo),
         DataGridCell<String>(columnName: '제목', value: e.notice),
         DataGridCell<String>(
-            columnName: '일자', value: e.regDate),
+            columnName: '일자', value: e.noticeDate.yyyyMMdd),
       ]);
     }).toList();
     shouldRecalc = true;

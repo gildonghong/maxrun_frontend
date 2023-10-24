@@ -63,11 +63,11 @@ class AccountScreenModel extends DataGridSource {
     final columns = <GridColumn>[
       column(columnName: "No", width: 70),
       column(columnName: "부서", width: 120),
-      column(columnName: "직책", width: 100),
-      column(columnName: "성명", width: 90),
+      column(columnName: "직책", width: 120),
+      column(columnName: "성명", width: 120),
       column(columnName: "휴대폰", width: 120),
-      column(columnName: "ID"),
-      column(columnName: "PW", width: 100),
+      column(columnName: "ID", width: 100),
+      column(columnName: "PW", width: 120),
       column(columnName: "직원사용일", width: 100),
       column(columnName: "App버전", width: 100),
       // column(columnName: "작업중사진",width: 100),
@@ -97,7 +97,7 @@ class AccountScreenModel extends DataGridSource {
         case "No":
           return Center(
             child: Text(
-              "${e.value}",
+              "${e.value == 0 ? '' : e.value}",
               style: TextStyle(),
             ),
           );
@@ -123,7 +123,7 @@ class AccountScreenModel extends DataGridSource {
         case "App버전":
           return Center(
             child: Text(
-              account.osVersion,
+              account.osVersion??"",
               style: TextStyle(),
             ),
           );

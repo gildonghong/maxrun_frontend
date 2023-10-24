@@ -12,10 +12,10 @@ class Account {
         required this.managerYn,
         required this.loginId,
         required this.workerNo,
-        required this.os,
+        this.os,
         // required this.regDate,
-        required this.lastUseDate,
-        required this.osVersion,
+        this.lastUseDate,
+        this.osVersion,
         // required this.regUserId,
         required this.departmentNo,
         required this.departmentName,
@@ -25,14 +25,14 @@ class Account {
         required this.status,
     });
 
-    String cpNo;
+    String? cpNo;
     String managerYn;
     String loginId;
     int workerNo;
-    String os;
+    String? os;
     // int regDate;
     DateTime? lastUseDate;
-    String osVersion;
+    String? osVersion;
     // int regUserId;
     int departmentNo;
     String departmentName;

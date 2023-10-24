@@ -59,6 +59,7 @@ class _AccountScreenState extends State<AccountScreen> with AutomaticKeepAliveCl
 
   Widget list() {
     return SfDataGrid(
+      gridLinesVisibility: GridLinesVisibility.none,
       rowHeight: 48,
       source: model,
       columnWidthMode: ColumnWidthMode.auto,

@@ -59,12 +59,12 @@ class _AgentMainScreenState extends State<AgentMainScreen> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12),
       color: Colors.blue[50],
-      width: 120,
+      width: 160,
       child: Column(
         children: [
           SizedBox(height: 30),
           Text(
-            "맥스런\n에이전트",
+            user.repairShopName,
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,
@@ -100,7 +100,7 @@ class _AgentMainScreenState extends State<AgentMainScreen> {
                   UserService().logout();
                 },
                 child: Text(
-                  "${user.workerName} 님\n로그아웃",
+                  "${user.workerName}\n로그아웃",
                   style: TextStyle(),
                   textAlign: TextAlign.center,
                 )),

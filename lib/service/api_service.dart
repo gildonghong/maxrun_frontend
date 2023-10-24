@@ -31,7 +31,11 @@ final interceptor = InterceptorsWrapper(
     } catch (e) {}
   },
   onError: (error, handler) async {
-    EasyLoading.showError(error.response?.data ?? "시스템 오류가 발생했습니다.");
+    if( error.error is FormatException) {
+      EasyLoading.showError((error.error as FormatException?)?.source ?? "시스템 오류가 발생했습니다.");
+    } else {
+      EasyLoading.showError(error.response?.data ?? "시스템 오류가 발생했습니다.");
+    }
     handler.next(error);
   },
 );

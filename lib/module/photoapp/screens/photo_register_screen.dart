@@ -8,6 +8,7 @@ import 'package:photoapp/model/car_care.dart';
 import 'package:photoapp/model/department.dart';
 import 'package:photoapp/service/car_care_service.dart';
 import 'package:photoapp/service/department_service.dart';
+import 'package:photoapp/service/enter_service.dart';
 import 'package:photoapp/service/user_service.dart';
 import 'package:photoapp/ui/always_disabled_focus_node.dart';
 import 'package:provider/provider.dart';
@@ -79,13 +80,17 @@ class _PhotoRegisterScreenState extends State<PhotoRegisterScreen> {
       return;
     }
 
-    final reqNo = await CarCareService().enterIn(
-        reqNo: widget.carCare?.reqNo,
-        carLicenseNo: carLicenseNo!,
-        ownerName: ownerName,
-        ownerCpNo: ownerCpNo!,
-        paymentType: paymentType);
-    await CarCareService().repair(reqNo, departmentNo, widget.files);
+    // final reqNo = await EnterService().enterIn(
+    //     reqNo: widget.carCare?.reqNo,
+    //     carLicenseNo: carLicenseNo!,
+    //     ownerName: ownerName,
+    //     ownerCpNo: ownerCpNo!,
+    //     paymentType: paymentType);
+    // await CarCareService().enterWithPhoto(reqNo: widget.carCare?.reqNo,
+    //     carLicenseNo: carLicenseNo!,
+    //     ownerName: ownerName,
+    //     ownerCpNo: ownerCpNo!,
+    //     paymentType: paymentType, photos: widget.files);
 
     Navigator.of(context).pop(true);
     EasyLoading.showSuccess("${widget.department.departmentName}부서 사진을 등록했습니다.");

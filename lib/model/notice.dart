@@ -1,27 +1,37 @@
-class Notice{
+// To parse this JSON data, do
+//
+//     final notice = noticeFromJson(jsonString);
+
+import 'dart:convert';
+
+Notice noticeFromJson(String str) => Notice.fromJson(json.decode(str));
+
+String noticeToJson(Notice data) => json.encode(data.toJson());
+
+class Notice {
+  int rownum;
   int noticeNo;
+  DateTime noticeDate;
   String notice;
-  String regDate;
 
   Notice({
+    required this.rownum,
     required this.noticeNo,
+    required this.noticeDate,
     required this.notice,
-    required this.regDate,
   });
 
-  Map<String, dynamic> toJson() {
-    return {
-      'noticeNo': this.noticeNo,
-      'notice': this.notice,
-      'regDate': this.regDate,
-    };
-  }
+  factory Notice.fromJson(Map<String, dynamic> json) => Notice(
+    rownum: json["rownum"],
+    noticeNo: json["noticeNo"],
+    noticeDate: DateTime.fromMillisecondsSinceEpoch(json["noticeDate"]),
+    notice: json["notice"],
+  );
 
-  factory Notice.fromJson(Map<String, dynamic> map) {
-    return Notice(
-      noticeNo: map['noticeNo'] as int,
-      notice: map['notice'] as String,
-      regDate: map['regDate'] as String,
-    );
-  }
+  Map<String, dynamic> toJson() => {
+    "rownum": rownum,
+    "noticeNo": noticeNo,
+    "noticeDate": noticeDate.millisecondsSinceEpoch,
+    "notice": notice,
+  };
 }

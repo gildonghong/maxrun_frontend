@@ -203,7 +203,7 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
                   padding: EdgeInsets.only(left: 8, bottom: 4),
                   color: Colors.black45,
                   width: double.infinity,
-                  child: Text(item.carLicenseNo,
+                  child: Text(item.carLicenseNo??"",
                       style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w900,

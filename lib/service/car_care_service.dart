@@ -66,6 +66,9 @@ class CarCareService {
       //     MultipartFile.fromStream(file.openRead, await file.length())));
     }
 
+    final res = await api
+        .post<Map<String, dynamic>>("/repairshop/carcare/repair", data: data);
+
     await fetch();
   }
 }

@@ -10,15 +10,15 @@ String carCareToJson(CarCare data) => json.encode(data.toJson());
 
 class CarCare {
   String fileName;
-  String ownerCpNo;
+  String? ownerCpNo;
   int workerNo;
   int reqNo;
   int regDate;
   int fileGroupNo;
-  String carLicenseNo;
+  String? carLicenseNo;
   String paymentType;
   int repairShopNo;
-  String ownerName;
+  String? ownerName;
   int fileNo;
   String fileSavedPath;
   int departmentNo;
@@ -42,13 +42,16 @@ class CarCare {
   });
 
   String get formattedOwnerCpNo {
-    switch( ownerCpNo.length) {
+    if(ownerCpNo==null) {
+      return "";
+    }
+    switch( ownerCpNo!.length) {
       case 11:
-        return ownerCpNo.substring(0, 3) + "." + ownerCpNo.substring(3, 7) + ownerCpNo.substring(7);
+        return "${ownerCpNo!.substring(0, 3)}.${ownerCpNo!.substring(3, 7)}${ownerCpNo!.substring(7)}";
       case 12:
-        return ownerCpNo.substring(0, 3) + "." + ownerCpNo.substring(3, 6) + ownerCpNo.substring(6);
+        return "${ownerCpNo!.substring(0, 3)}.${ownerCpNo!.substring(3, 6)}${ownerCpNo!.substring(6)}";
       default:
-        return ownerCpNo;
+        return ownerCpNo!;
     }
   }
 
