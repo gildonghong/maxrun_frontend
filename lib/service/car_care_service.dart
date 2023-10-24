@@ -27,9 +27,12 @@ class CarCareService {
     });
   }
 
-  fetch() async {
+  fetch([String? carLicenseNo]) async {
     final res = await api.get<List<dynamic>>("/repairshop/carcare/list",
-        queryParameters: {"departmentName": "신규등록"});
+        queryParameters: {
+      "departmentName": "신규등록",
+      "carLicenseNo": carLicenseNo,
+    });
     list.value = res.data!.map((e) => CarCare.fromJson(e)).toList();
   }
 
@@ -66,8 +69,8 @@ class CarCareService {
       //     MultipartFile.fromStream(file.openRead, await file.length())));
     }
 
-    final res = await api
-        .post<Map<String, dynamic>>("/repairshop/carcare/repair", data: data);
+    await api
+        .post<int>("/repairshop/carcare/repair", data: data);
 
     await fetch();
   }

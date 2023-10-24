@@ -6,6 +6,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photoapp/model/car_care.dart';
 import 'package:photoapp/model/department.dart';
+import 'package:photoapp/model/enter.dart';
 import 'package:photoapp/service/car_care_service.dart';
 import 'package:photoapp/service/department_service.dart';
 import 'package:photoapp/service/enter_service.dart';
@@ -32,8 +33,8 @@ class _PhotoRegisterScreenState extends State<PhotoRegisterScreen> {
 
   late int? reqNo = widget.carCare?.reqNo;
   late int departmentNo = widget.department.departmentNo;
-  late String? carLicenseNo= widget.carCare?.carLicenseNo;
-  late String? ownerName =widget.carCare?.ownerName;
+  late String? carLicenseNo = widget.carCare?.carLicenseNo;
+  late String? ownerName = widget.carCare?.ownerName;
   late String? ownerCpNo = widget.carCare?.ownerCpNo;
   late String? paymentType = widget.carCare?.paymentType;
 
@@ -80,6 +81,17 @@ class _PhotoRegisterScreenState extends State<PhotoRegisterScreen> {
       return;
     }
 
+    if( this.reqNo==null) {
+      this.reqNo = await EnterService().enterIn(
+          reqNo: this.reqNo,
+          carLicenseNo: carLicenseNo!,
+          ownerName: ownerName,
+          ownerCpNo: ownerCpNo!,
+          paymentType: paymentType);
+    }
+
+    await CarCareService().repair(this.reqNo!, departmentNo, widget.files);
+
     // final reqNo = await EnterService().enterIn(
     //     reqNo: widget.carCare?.reqNo,
     //     carLicenseNo: carLicenseNo!,
@@ -93,7 +105,8 @@ class _PhotoRegisterScreenState extends State<PhotoRegisterScreen> {
     //     paymentType: paymentType, photos: widget.files);
 
     Navigator.of(context).pop(true);
-    EasyLoading.showSuccess("${widget.department.departmentName}부서 사진을 등록했습니다.");
+    EasyLoading.showSuccess(
+        "${widget.department.departmentName}부서 사진을 등록했습니다.");
   }
 
   Widget saveButton() {

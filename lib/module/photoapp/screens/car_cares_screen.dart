@@ -18,6 +18,14 @@ class CarCaresScreen extends StatefulWidget {
 }
 
 class _CarCaresScreenState extends State<CarCaresScreen> {
+  final searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    super.dispose();
+    searchController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -33,7 +41,11 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
                 children: [
                   Expanded(
                     child: TextFormField(
+                      controller: searchController,
                       textAlign: TextAlign.center,
+                      onEditingComplete: () {
+                        CarCareService().fetch(searchController.text);
+                      },
                       decoration: InputDecoration(
                         hintText: "차량 번호 검색",
                         prefixIcon: Icon(Icons.search),
@@ -101,7 +113,7 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    departmentField(),
+                    departmentField(true),
                   ],
                 ),
               ),
@@ -142,28 +154,42 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
   final ImagePicker picker = ImagePicker();
 
   Widget list() {
-    return StreamBuilder<List<CarCare>>(
-      stream: CarCareService().list,
-      initialData: [],
-      builder: (context, snapshot) {
-        return GroupedListView.grid(
-          padding: EdgeInsets.symmetric(horizontal: 12),
-          crossAxisSpacing: 4,
-          mainAxisSpacing: 4,
-          itemsAspectRatio: 0.7,
-          items: snapshot.data!,
-          itemGrouper: (CarCare i) => i.yyyyMm.replaceAll("-", "년 ") + "월",
-          headerBuilder: (context, String month) => Container(
-              alignment: AlignmentDirectional.centerStart,
-              padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-              child: Text(month,
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900))),
-          gridItemBuilder: (context, int countInGroup, int itemIndexInGroup,
-                  CarCare item, int itemIndexInOriginalList) =>
-              listItem(item),
-          crossAxisCount: 2,
-        );
-      }
+    return RefreshIndicator(
+      onRefresh: () async {
+        await CarCareService().fetch(searchController.text);
+        return;
+      },
+      child: StreamBuilder<List<CarCare>>(
+        stream: CarCareService().list,
+        initialData: [],
+        builder: (context, snapshot) {
+          if( snapshot.data!.isEmpty) {
+            return Padding(
+              padding: const EdgeInsets.only(top:40.0),
+              child: Text("검색결과가 없습니다.", style:TextStyle(fontSize: 20)),
+            );
+          }
+
+          return GroupedListView.grid(
+            shrinkWrap: false,
+            padding: EdgeInsets.symmetric(horizontal: 12),
+            crossAxisSpacing: 4,
+            mainAxisSpacing: 4,
+            itemsAspectRatio: 0.7,
+            items: snapshot.data!,
+            itemGrouper: (CarCare i) => i.yyyyMm.replaceAll("-", "년 ") + "월",
+            headerBuilder: (context, String month) => Container(
+                alignment: AlignmentDirectional.centerStart,
+                padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                child: Text(month,
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900))),
+            gridItemBuilder: (context, int countInGroup, int itemIndexInGroup,
+                    CarCare item, int itemIndexInOriginalList) =>
+                listItem(item),
+            crossAxisCount: 2,
+          );
+        }
+      ),
     );
   }
 
@@ -193,7 +219,7 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
                   padding: EdgeInsets.only(left: 8, top: 8),
                   color: Colors.black45,
                   width: double.infinity,
-                  child: Text("${item.ownerName} ${item.formattedOwnerCpNo}",
+                  child: Text("${item.ownerName??''} ${item.formattedOwnerCpNo??''}".trim(),
                       style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -225,11 +251,11 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
     department = context.read<Department?>();
   }
 
-  Widget departmentField() {
+  Widget departmentField(bool isNew) {
     final departments = context.watch<List<Department>>();
     return DropdownButtonFormField<Department?>(
       decoration: InputDecoration(labelText: "부서"),
-      value: department,
+      value: isNew ? departments.firstWhere((element) => element.departmentName=='신규등록') : department,
       validator: (value) {
         if (department == null) {
           return "부서를 선택하세요";

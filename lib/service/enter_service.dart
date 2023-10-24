@@ -49,7 +49,7 @@ class EnterService {
       "ownerName": ownerName,
       "ownerCpNo": ownerCpNo,
       "paymentType": paymentType,
-      "memo": memo ?? [],
+      // "memo": memo,
     });
 
     return res.data!["reqNo"];
