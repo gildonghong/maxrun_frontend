@@ -81,7 +81,7 @@ class _PhotoRegisterScreenState extends State<PhotoRegisterScreen> {
       return;
     }
 
-    if( this.reqNo==null) {
+    if (this.reqNo == null) {
       this.reqNo = await EnterService().enterIn(
           reqNo: this.reqNo,
           carLicenseNo: carLicenseNo!,
@@ -234,18 +234,28 @@ class _PhotoRegisterScreenState extends State<PhotoRegisterScreen> {
   Widget images() {
     return InputDecorator(
       decoration: InputDecoration(
-        labelText: "부서 사진",
-        contentPadding:
-            EdgeInsets.only(top: 12, left: 12, right: 12, bottom: 12),
+        contentPadding: EdgeInsets.zero,
+        label: Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Text("부서 사진", style: TextStyle()),
+        ),
       ),
-      child: Center(
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Wrap(
-            spacing: 8,
-            children: widget.files
-                .map((e) => Image.file(height: 220, File(e.path)))
-                .toList(),
+      child: Card(
+        color: Colors.transparent,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(6))),
+        margin: EdgeInsets.only(top: 6, left: 5,right: 5,bottom: 4),
+        clipBehavior: Clip.antiAlias,
+        child: Center(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Wrap(
+              spacing: 8,
+              children: widget.files
+                  .map((e) => Image.file(height: 220, File(e.path)))
+                  .toList(),
+            ),
           ),
         ),
       ),

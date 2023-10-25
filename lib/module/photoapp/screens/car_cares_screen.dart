@@ -141,47 +141,56 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title: Text(item == null ? "차량 신규 등록" : "부서 사진 추가",
-                  style: TextStyle()),
+              title: Center(
+                child: Text(item == null ? "신규 입고 등록" : "부서 사진 추가",
+                    style: TextStyle()),
+              ),
               content: Form(
                 key: pickerOptionFormKey,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    SizedBox(height:8),
                     departmentField(item == null),
+                    SizedBox(height:16),
+                    Row(children: [
+                      Expanded(
+                        child: FilledButton.icon(
+                          onPressed: () async {
+                            if (pickerOptionFormKey.currentState?.validate() != true) {
+                              return;
+                            }
+
+                            images = await picker.pickMultiImage();
+                            pushRegisterScreen(item);
+                          },
+                          icon: Icon(Icons.photo_library),
+                          label: Text("앨범", style: TextStyle()),
+                        ),
+                      ),
+                      SizedBox(width:8),
+                      Expanded(
+                        child: FilledButton.icon(
+                          onPressed: () async {
+                            if (pickerOptionFormKey.currentState?.validate() != true) {
+                              return;
+                            }
+                            final XFile? photo =
+                            await picker.pickImage(source: ImageSource.camera);
+                            if (photo != null) {
+                              images = [photo];
+                              pushRegisterScreen(item);
+                            }
+                          },
+                          icon: Icon(Icons.camera),
+                          label: Text("카메라", style: TextStyle()),
+                        ),
+                      ),
+                    ],)
                   ],
                 ),
               ),
               actionsAlignment: MainAxisAlignment.center,
-              actions: [
-                FilledButton.icon(
-                  onPressed: () async {
-                    if (pickerOptionFormKey.currentState?.validate() != true) {
-                      return;
-                    }
-
-                    images = await picker.pickMultiImage();
-                    pushRegisterScreen(item);
-                  },
-                  icon: Icon(Icons.photo_library),
-                  label: Text("앨범", style: TextStyle()),
-                ),
-                FilledButton.icon(
-                  onPressed: () async {
-                    if (pickerOptionFormKey.currentState?.validate() != true) {
-                      return;
-                    }
-                    final XFile? photo =
-                        await picker.pickImage(source: ImageSource.camera);
-                    if (photo != null) {
-                      images = [photo];
-                      pushRegisterScreen(item);
-                    }
-                  },
-                  icon: Icon(Icons.camera),
-                  label: Text("카메라", style: TextStyle()),
-                ),
-              ],
             ));
   }
 
