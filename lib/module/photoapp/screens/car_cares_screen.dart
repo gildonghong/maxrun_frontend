@@ -4,6 +4,7 @@ import 'package:photoapp/model/car_care.dart';
 import 'package:photoapp/model/department.dart';
 import 'package:photoapp/model/shop.dart';
 import 'package:photoapp/model/user.dart';
+import 'package:photoapp/module/photoapp/photo_app.dart';
 import 'package:photoapp/module/photoapp/screens/photo_register_screen.dart';
 import 'package:photoapp/service/car_care_service.dart';
 import 'package:photoapp/service/department_service.dart';
@@ -58,7 +59,7 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
                   IconButton(
                     style: IconButton.styleFrom(padding: EdgeInsets.zero),
                     onPressed: showAccountPopup,
-                    icon: Icon(Icons.account_circle_rounded, size: 36,color: Colors.red[800],),
+                    icon: Icon(Icons.account_circle_rounded, size: 36,color: colorPrimary,),
                   )
                 ],
               ),
@@ -87,7 +88,6 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
             SizedBox(
               width: double.infinity,
               child: FilledButton(
-                style: FilledButton.styleFrom(backgroundColor: Colors.red),
                 onPressed: () {
                   Navigator.of(context).pop();
                   UserService().logout();
@@ -105,6 +105,8 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: FloatingActionButton.large(
+        // backgroundColor: Colors.red[800]!.withOpacity(0.9),
+
         shape: CircleBorder(),
         // foregroundColor: Colors.white,
         // backgroundColor: Colors.red,
@@ -279,17 +281,11 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
 
   Department? department;
 
-  @override
-  void initState() {
-    super.initState();
-    department = context.read<Department?>();
-  }
-
   Widget departmentField(bool isNew) {
     final departments = context.watch<List<Department>>();
 
     if (isNew) {
-      final department =
+      department =
           departments.firstWhere((element) => element.departmentName == '신규등록');
 
       return DropdownButtonFormField<Department?>(
@@ -297,13 +293,15 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
         value: department,
         items: [
           DropdownMenuItem(
-            value: department!,
+            value: department,
             child: Text(department!.departmentName, style: TextStyle()),
           )
         ],
         onChanged: (Department? value) {},
       );
     }
+
+    department = context.read<Department?>();
 
     return DropdownButtonFormField<Department?>(
       decoration: InputDecoration(labelText: "부서"),

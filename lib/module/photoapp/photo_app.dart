@@ -15,14 +15,14 @@ import 'package:tuple/tuple.dart';
 
 import 'screens/app_login_screen.dart';
 
+final colorPrimary = Colors.red[800]!.withOpacity(0.9);
+final colorSecondary = Colors.red[800]!.withOpacity(0.9);
+
+
 class PhotoApp extends StatelessWidget {
-
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    const primary = Colors.black87;
-    final Color secondary = Colors.red[700]!;
     return MaterialApp(
       title: 'Lotails Admin',
       localizationsDelegates: const [
@@ -37,7 +37,7 @@ class PhotoApp extends StatelessWidget {
       themeMode: ThemeMode.light,
       theme: ThemeData(
         // scaffoldBackgroundColor: Colors.black,
-        colorScheme: ColorScheme.light(primary: primary, secondary: secondary),
+        colorScheme: ColorScheme.light(primary: colorPrimary, secondary: colorSecondary),
         // colorScheme: ColorScheme.light(primary: Colors.black.withOpacity(0.8), secondary: Colors.red),
         useMaterial3: true,
         dialogTheme: const DialogTheme(
