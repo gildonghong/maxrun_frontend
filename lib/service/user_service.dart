@@ -24,7 +24,6 @@ class UserService extends PreferenceAdapter<User> {
   bool get isManager => user.getValue()?.managerYn == "Y";
 
   login(String loginId, String pwd) async {
-    try {
       final res = await api.post<Map<String, dynamic>>("/login", data: {
         "loginId": loginId,
         "passwd": pwd,
@@ -32,10 +31,6 @@ class UserService extends PreferenceAdapter<User> {
 
       final w = User.fromJson(res.data!);
       await user.setValue(w);
-    } catch (e) {
-      // EasyLoading.showError("계정을 찾을 수 없습니다.");
-      EasyLoading.showError(e.toString());
-    }
   }
 
   void logout() {

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:photoapp/service/user_service.dart';
 
 class AgentLoginScreen extends StatefulWidget {
@@ -50,7 +51,6 @@ class _AgentLoginScreenState extends State<AgentLoginScreen> {
                   SizedBox(height: 12),
                   TextFormField(
                     initialValue: kDebugMode ? "maxrun" : null,
-
                     decoration: InputDecoration(labelText: "비밀번호"),
                     obscureText: true,
                     onSaved: (newValue) {
@@ -87,7 +87,13 @@ class _AgentLoginScreenState extends State<AgentLoginScreen> {
   submit() {
     if (formKey.currentState?.validate() == true) {
       formKey.currentState?.save();
-      UserService().login(id!, pw!);
+
+      try{
+        UserService().login(id!, pw!);
+
+      }catch(e){
+        EasyLoading.showError(e.toString());
+      }
     }
   }
 }

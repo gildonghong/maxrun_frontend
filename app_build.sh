@@ -1,2 +1,2 @@
-flutter build apk --dart-define=BASE_URL=http://maxrunphoto.cafe24.com -t ./lib/module/photoapp/photoapp_main.dart
+flutter build apk --dart-define=BASE_URL=http://www.sabangdisco-tour.com -t ./lib/module/photoapp/photoapp_main.dart
 adb install /Users/taeuk/dev/maxrun/maxrun_frontend/build/app/outputs/flutter-apk/app-release.apk

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:photoapp/service/user_service.dart';
 
 class AppLoginScreen extends StatefulWidget {
@@ -9,8 +10,15 @@ class AppLoginScreen extends StatefulWidget {
 
 class _AppLoginScreenState extends State<AppLoginScreen> {
   final formKey = GlobalKey<FormState>();
-  String id = "";
-  String pw = "";
+  final idCon = TextEditingController(text: kDebugMode ? "" : "");
+  final pwCon = TextEditingController(text: kDebugMode ? "" : "");
+
+  @override
+  void dispose() {
+    super.dispose();
+    idCon.dispose();
+    pwCon.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,12 +43,9 @@ class _AppLoginScreenState extends State<AppLoginScreen> {
                   SizedBox(height: 48),
                   TextFormField(
                     textInputAction: TextInputAction.next,
-                    initialValue: kDebugMode ? "loginId1" : null,
+                    controller: idCon,
                     autofocus: true,
                     decoration: InputDecoration(labelText: "아이디"),
-                    onSaved: (newValue) {
-                      id = newValue ?? "";
-                    },
                     validator: (value) {
                       if (value?.isNotEmpty != true) {
                         return "아이디를 입력하세요";
@@ -50,13 +55,9 @@ class _AppLoginScreenState extends State<AppLoginScreen> {
                   SizedBox(height: 12),
                   TextFormField(
                     textInputAction: TextInputAction.go,
-                    initialValue: kDebugMode ? "loginId1" : null,
-
+                    controller: pwCon,
                     decoration: InputDecoration(labelText: "비밀번호"),
                     obscureText: true,
-                    onSaved: (newValue) {
-                      pw = newValue ?? "";
-                    },
                     validator: (value) {
                       if (value?.isNotEmpty != true) {
                         return "비밀번호를 입력하세요";
@@ -85,10 +86,16 @@ class _AppLoginScreenState extends State<AppLoginScreen> {
     );
   }
 
-  submit() {
+  submit() async {
     if (formKey.currentState?.validate() == true) {
       formKey.currentState?.save();
-      UserService().login(id, pw);
+      try{
+        await UserService().login(idCon.text, pwCon.text);
+       idCon.text="";
+       pwCon.text="";
+      }catch(e){
+        EasyLoading.showError(e.toString());
+      }
     }
   }
 }
