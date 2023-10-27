@@ -26,6 +26,12 @@ class _RepairScreenState extends State<RepairScreen>
   });
 
   @override
+  void initState() {
+    super.initState();
+    search();
+  }
+
+  @override
   void dispose() {
     super.dispose();
     searchController.dispose();

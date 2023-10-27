@@ -5,17 +5,14 @@ import 'package:photoapp/preference.dart';
 import 'package:photoapp/service/department_service.dart';
 import 'package:photoapp/service/user_service.dart';
 
-
 Future<void> main() async {
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
-  await initPreferences();
-  final futures = [Future.delayed(Duration(seconds: 1)),];
-
-  if(UserService().user.getValue() != null) {
-    futures.add(DepartmentService().fetch());
-  }
+  final futures = [
+    initPreferences(),
+    Future.delayed(Duration(seconds: 1)),
+  ];
 
   await Future.wait(futures);
 
@@ -23,4 +20,3 @@ Future<void> main() async {
 
   runApp(PhotoApp());
 }
-

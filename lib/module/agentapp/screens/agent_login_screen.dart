@@ -87,13 +87,7 @@ class _AgentLoginScreenState extends State<AgentLoginScreen> {
   submit() {
     if (formKey.currentState?.validate() == true) {
       formKey.currentState?.save();
-
-      try{
-        UserService().login(id!, pw!);
-
-      }catch(e){
-        EasyLoading.showError(e.toString());
-      }
+      UserService().login(id!, pw!);
     }
   }
 }

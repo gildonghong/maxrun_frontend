@@ -18,13 +18,13 @@ class CarCareService {
   final list = BehaviorSubject<List<CarCare>>.seeded([]);
 
   CarCareService._() {
-    UserService().user.listen((value) {
-      if (value != null) {
-        fetch();
-      } else {
-        list.value = [];
-      }
-    });
+    // UserService().user.listen((value) {
+    //   if (value != null) {
+    //     fetch();
+    //   } else {
+    //     list.value = [];
+    //   }
+    // });
   }
 
   fetch([String? carLicenseNo]) async {

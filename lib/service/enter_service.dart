@@ -20,13 +20,14 @@ class EnterService {
   final list = BehaviorSubject<List<Enter>>.seeded([]);
 
   EnterService._() {
-    UserService().user.listen((value) {
-      if (value != null) {
-        fetch();
-      } else {
-        list.value = [];
-      }
-    });
+    // UserService().user.listen((value) {
+    //   if (value != null) {
+    //     if( list.value.)
+    //     fetch();
+    //   } else {
+    //     list.value = [];
+    //   }
+    // });
   }
 
   fetch({String? carLicenseNo}) async {

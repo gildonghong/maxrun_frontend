@@ -11,9 +11,7 @@ import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 var retryCount = 0;
 final interceptor = InterceptorsWrapper(
   onRequest: (options, handler) async {
-    try {
-      EasyLoading.show();
-    } catch (e) {}
+    EasyLoading.show();
 
     final token = UserService().user.getValue()?.uAtoken;
 
@@ -25,18 +23,20 @@ final interceptor = InterceptorsWrapper(
   },
   onResponse: (e, handler) {
     retryCount = 0;
+    EasyLoading.dismiss();
     handler.next(e);
-    try {
-      EasyLoading.dismiss();
-    } catch (e) {}
   },
   onError: (error, handler) async {
+    var message = "";
     if( error.error is FormatException) {
-      EasyLoading.showError((error.error as FormatException?)?.source ?? "시스템 오류가 발생했습니다.");
+      final fe = error.error as FormatException;
+      message = fe.source;
     } else {
-      EasyLoading.showError(error.response?.data ?? "시스템 오류가 발생했습니다.");
+      message = error.response?.data ?? "시스템 오류가 발생했습니다.";
     }
-    handler.next(error);
+    EasyLoading.showError(message);
+    // handler.next(error);
+    handler.reject(DioException(requestOptions:error.requestOptions,message: message));
   },
 );
 

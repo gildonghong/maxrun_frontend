@@ -81,32 +81,19 @@ class _PhotoRegisterScreenState extends State<PhotoRegisterScreen> {
       return;
     }
 
-    if (this.reqNo == null) {
-      this.reqNo = await EnterService().enterIn(
-          reqNo: this.reqNo,
-          carLicenseNo: carLicenseNo!,
-          ownerName: ownerName,
-          ownerCpNo: ownerCpNo!,
-          paymentType: paymentType);
-    }
+    reqNo ??= await EnterService().enterIn(
+        reqNo: reqNo,
+        carLicenseNo: carLicenseNo!,
+        ownerName: ownerName,
+        ownerCpNo: ownerCpNo!,
+        paymentType: paymentType);
 
-    await CarCareService().repair(this.reqNo!, departmentNo, widget.files);
-
-    // final reqNo = await EnterService().enterIn(
-    //     reqNo: widget.carCare?.reqNo,
-    //     carLicenseNo: carLicenseNo!,
-    //     ownerName: ownerName,
-    //     ownerCpNo: ownerCpNo!,
-    //     paymentType: paymentType);
-    // await CarCareService().enterWithPhoto(reqNo: widget.carCare?.reqNo,
-    //     carLicenseNo: carLicenseNo!,
-    //     ownerName: ownerName,
-    //     ownerCpNo: ownerCpNo!,
-    //     paymentType: paymentType, photos: widget.files);
+    await CarCareService().repair(reqNo!, departmentNo, widget.files);
 
     Navigator.of(context).pop(true);
     EasyLoading.showSuccess(
         "${widget.department.departmentName}부서 사진을 등록했습니다.");
+
   }
 
   Widget saveButton() {

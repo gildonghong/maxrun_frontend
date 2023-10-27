@@ -89,13 +89,9 @@ class _AppLoginScreenState extends State<AppLoginScreen> {
   submit() async {
     if (formKey.currentState?.validate() == true) {
       formKey.currentState?.save();
-      try{
-        await UserService().login(idCon.text, pwCon.text);
-       idCon.text="";
-       pwCon.text="";
-      }catch(e){
-        EasyLoading.showError(e.toString());
-      }
+      await UserService().login(idCon.text, pwCon.text);
+      idCon.text="";
+      pwCon.text="";
     }
   }
 }

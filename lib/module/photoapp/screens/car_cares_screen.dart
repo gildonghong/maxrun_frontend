@@ -23,6 +23,12 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
   final searchController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    CarCareService().fetch();
+  }
+
+  @override
   void dispose() {
     super.dispose();
     searchController.dispose();
