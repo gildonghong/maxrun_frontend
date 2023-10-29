@@ -4,27 +4,21 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:photoapp/extension/datetime_ext.dart';
 import 'package:photoapp/model/enter.dart';
+import 'package:photoapp/model/photo.dart';
 import 'package:photoapp/service/enter_service.dart';
 import 'package:rxdart/rxdart.dart';
 
-class EnterDetailDetail extends StatefulWidget {
+class EnterDetail extends StatefulWidget {
   Stream<Enter?> enter;
 
-  EnterDetailDetail({required this.enter, super.key});
+  EnterDetail({required this.enter, super.key});
 
   @override
-  State<EnterDetailDetail> createState() => _EnterDetailDetailState();
+  State<EnterDetail> createState() => _EnterDetailState();
 }
 
-class _EnterDetailDetailState extends State<EnterDetailDetail> {
+class _EnterDetailState extends State<EnterDetail> {
   Stream<Enter?> get enter => widget.enter;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    debugPrint("EnterDetail.initState");
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,22 +28,25 @@ class _EnterDetailDetailState extends State<EnterDetailDetail> {
           if (snapshot.data == null) {
             return Container();
           }
+
+          final enter = snapshot.data!;
+
           return Column(
             children: [
-              Expanded(flex: 2, child: photo(snapshot.data!)),
+              Expanded(flex: 2, child: photoList(enter)),
               SizedBox(height: 12),
-              message(),
+              message(enter),
               SizedBox(height: 12),
               Expanded(
                 flex: 1,
-                child: memo(snapshot.data!),
+                child: memo(enter),
               ),
             ],
           );
         });
   }
 
-  Widget message() {
+  Widget message(Enter enter) {
     return Container(
       decoration: BoxDecoration(
           color: Colors.blue.withOpacity(0.04),
@@ -60,45 +57,57 @@ class _EnterDetailDetailState extends State<EnterDetailDetail> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           FilledButton(
-            onPressed: () {},
-            child: Text("케미컬 청구신청", style: TextStyle()),
+            onPressed: enter.maxrunTalkYn ? null : () {
+
+            },
+            child: Text(enter.maxrunTalkYn?"케미컬 청구신청 완료":"케미컬 청구신청", style: TextStyle()),
           ),
           SizedBox(width: 12),
           FilledButton(
-            onPressed: null,
-            child: Text("작업완료 알림톡 신청완료. 2023.06.28", style: TextStyle()),
+            onPressed: enter.customerTalkYn ? null : () {
+
+            },
+            child: Text(enter.customerTalkYn ? "작업완료 알림톡 신청완료":"작업완료 알림톡 발송", style: TextStyle()),
           ),
         ],
       ),
     );
   }
 
-  Widget photo(Enter enter) {
-    final dir =
-        Directory.fromRawPath(Uint8List.fromList(enter.clientPath.codeUnits));
-    final files = (dir.existsSync() ? dir.listSync() : <FileSystemEntity>[])
-        .where((element) {
-      return ["jpg", "jpeg", "png"]
-          .contains(element.path.toLowerCase().split('.').last);
-    });
-
-    if (files.isEmpty) {
-      return Center(
-          child: Text("디렉토리가 없거나 비어 있습니다.", style: TextStyle(fontSize: 20)));
-    }
-
+  Widget photoList(Enter enter) {
     return SingleChildScrollView(
-      child: Wrap(
-          alignment: WrapAlignment.start,
-          clipBehavior: Clip.hardEdge,
-          spacing: 8,
-          runSpacing: 8,
-          children: files
-              .map((e) => Image(
-                  width: 300,
-                  fit: BoxFit.contain,
-                  image: FileImage(File(e.path))))
-              .toList()),
+      child: FutureBuilder<List<Photo>>(
+        future: EnterService().getPhotos(enter.reqNo),
+        initialData: [],
+        builder: (context, snapshot) {
+          final photos = snapshot.data!;
+          return Wrap(
+              alignment: WrapAlignment.start,
+              clipBehavior: Clip.hardEdge,
+              spacing: 8,
+              runSpacing: 8,
+              children: photos.map((e) => photo(e)).toList());
+        },
+      ),
+    );
+  }
+
+  Widget photo(Photo photo) {
+    return Stack(
+      alignment: Alignment.topLeft,
+      children: [
+        Image(
+            width: 300,
+            fit: BoxFit.contain,
+            image: NetworkImage(photo.serverFile)),
+        Container(
+          width: 300,
+          color: Colors.white.withOpacity(0.5),
+            child: Text(photo.clientFileName,
+                textAlign: TextAlign.center,
+                style:TextStyle(
+            ))),
+      ],
     );
   }
 
@@ -195,14 +204,14 @@ class _EnterDetailDetailState extends State<EnterDetailDetail> {
                   child: Row(
                     children: [
                       Text(
-                        memo.regDate.yyyyMMdd,
+                        memo.regDate.format("yyyy-MM-dd HH:mm"),
                         style: TextStyle(
                           fontSize: 14,
                         ),
                       ),
                       SizedBox(width: 16),
                       Text(
-                        memo.text,
+                        memo.memo,
                         style: TextStyle(
                           fontSize: 14,
                         ),

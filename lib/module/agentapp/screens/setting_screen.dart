@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:photoapp/model/shop.dart';
-import 'package:photoapp/model/user.dart';
-import 'package:photoapp/module/agentapp/screens/department_setting.dart';
-import 'package:photoapp/service/shop_service.dart';
-import 'package:provider/provider.dart';
+import 'package:photoapp/module/agentapp/screens/shop_department_setting.dart';
 
-import 'shop_setting.dart';
+import 'shop_info_screen.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -29,9 +25,9 @@ class _SettingScreenState extends State<SettingScreen>
         padding: const EdgeInsets.symmetric(vertical: 24.0,horizontal: 16),
         child: Column(
           children: [
-            ShopSettingScreen(),
+            ShopInfoScreen(),
             SizedBox(height: 32),
-            Expanded(child: DepartmentSetting()),
+            Expanded(child: ShopDepartmentSetting()),
           ],
         ),
       ),

@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 
+import 'package:darty_json/darty_json.dart';
 import 'package:flutter/foundation.dart';
 
 import 'memo.dart';
@@ -21,6 +22,8 @@ class Enter {
   int reqNo;
   String directoryName;
   String carLicenseNo;
+  bool maxrunTalkYn;
+  bool customerTalkYn;
 
   List<Memo> memo;
 
@@ -33,10 +36,14 @@ class Enter {
     required this.reqNo,
     required this.directoryName,
     required this.carLicenseNo,
-    required this.memo
+    required this.memo,
+    required this.maxrunTalkYn,
+    required this.customerTalkYn,
   });
 
   factory Enter.fromJson(Map<String, dynamic> json) {
+    final j = Json.fromMap(json);
+
     final enter = Enter(
         repairShopNo: json["repairShopNo"],
         clientPath: json["clientPath"],
@@ -46,7 +53,10 @@ class Enter {
         reqNo: json["reqNo"],
         directoryName: json["directoryName"],
         carLicenseNo: json["carLicenseNo"],
-        memo: (json["memo"] as List<dynamic>? ?? []).map((e)=>Memo.fromJson(e)).toList()
+        maxrunTalkYn: json["maxrunTalkYn"] =="Y",
+        customerTalkYn: json["customerTalkYn"] =="Y",
+        // memo: (json["memo"] as List<dynamic>? ?? []).map((e)=>Memo.fromJson(e)).toList(),
+        memo: j["memo"].listOfValue((p0) => Memo.fromJson(p0),),
     );
 
     // if( kDebugMode) {
@@ -66,5 +76,7 @@ class Enter {
     "directoryName": directoryName,
     "carLicenseNo": carLicenseNo,
     "memo": memo.map((e) => e.toJson()),
+    "maxrunTalkYn":maxrunTalkYn ? "Y":"N",
+    "customerTalkYn":customerTalkYn ? "Y":"N",
   };
 }

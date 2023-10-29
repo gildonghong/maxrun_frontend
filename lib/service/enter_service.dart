@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -5,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:photoapp/model/car_care.dart';
 import 'package:photoapp/model/enter.dart';
 import 'package:photoapp/model/memo.dart';
+import 'package:photoapp/model/photo.dart';
 import 'package:photoapp/service/user_service.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -30,10 +34,23 @@ class EnterService {
     // });
   }
 
-  fetch({String? carLicenseNo}) async {
+  Future<List<Enter>> fetch({int? repairShopNo, String? carLicenseNo}) async {
     final res = await api.get<List<dynamic>>("/repairshop/enter/list",
-        queryParameters: {"carLicenseNo": carLicenseNo});
+        queryParameters: {
+          "carLicenseNo": carLicenseNo,
+          "repairShopNo": repairShopNo
+        });
     list.value = res.data!.map((e) => Enter.fromJson(e)).toList();
+    return list.value;
+  }
+
+  Future<List<Photo>> getPhotos(int reqNo) async {
+    final res = await api
+        .get<List<dynamic>>("/repairshop/enter/photo/list", queryParameters: {
+      "reqNo": reqNo,
+    });
+
+    return res.data!.map((e) => Photo.fromJson(e)).toList();
   }
 
   Future<int> enterIn(
@@ -56,15 +73,32 @@ class EnterService {
     return res.data!["reqNo"];
   }
 
+  Future postChemicalRequestMessage() async {
+    await api.post("http://www.maxrunphoto.com/repairshop/message");
+  }
+
+  Future postRepairCompleteMessage() async {
+    await api.post("http://www.maxrunphoto.com/repairshop/message");
+  }
+
   Future addMemo(Enter enter, String text) async {
-    enter.memo.add(Memo(regDate: DateTime.now(), text: text));
-    await enterIn(reqNo: enter.reqNo, memo:enter.memo);
+    final res =
+        await api.post<Map<String, dynamic>>("/repairshop/carcare/memo", data: {
+      "reqNo": enter.reqNo,
+      "memo": text,
+    });
+
+    debugPrint(jsonEncode(res.data!));
+
+    final memo = Memo.fromJson(res.data!);
+    enter.memo.add(memo);
+
     list.add(list.value);
   }
 
   Future removeMemo(Enter enter, Memo memo) async {
     enter.memo.remove(memo);
-    await enterIn(reqNo: enter.reqNo, memo:enter.memo);
+    await enterIn(reqNo: enter.reqNo, memo: enter.memo);
     list.add(list.value);
   }
 }

@@ -11,14 +11,14 @@ import 'package:photoapp/service/shop_service.dart';
 import 'package:photoapp/ui/always_disabled_focus_node.dart';
 import 'package:provider/provider.dart';
 
-class ShopSettingScreen extends StatefulWidget {
-  ShopSettingScreen({super.key});
+class ShopInfoScreen extends StatefulWidget {
+  ShopInfoScreen({super.key});
 
   @override
-  State<ShopSettingScreen> createState() => _ShopSettingScreenState();
+  State<ShopInfoScreen> createState() => _ShopInfoScreenState();
 }
 
-class _ShopSettingScreenState extends State<ShopSettingScreen>
+class _ShopInfoScreenState extends State<ShopInfoScreen>
     with AutomaticKeepAliveClientMixin {
   final formKey = GlobalKey<FormState>();
   late final photoSavePathController = TextEditingController();

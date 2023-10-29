@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:photoapp/model/user.dart';
 import 'package:photoapp/module/agentapp/screens/account_screen.dart';
 import 'package:photoapp/module/agentapp/screens/notice_screen.dart';
-import 'package:photoapp/module/agentapp/screens/photo_screen.dart';
-import 'package:photoapp/module/agentapp/screens/setting_screen.dart';
-import 'package:photoapp/module/agentapp/screens/repair_screen.dart';
+import 'package:photoapp/module/agentapp/screens/photo_manage_screen.dart';
+import 'package:photoapp/module/agentapp/screens/shop_manage_screen.dart';
 import 'package:photoapp/service/user_service.dart';
-import 'package:photoapp/model/user.dart';
 import 'package:provider/provider.dart';
 
+import 'setting_screen.dart';
 import 'work_screen.dart';
 
 
@@ -20,42 +20,64 @@ class AgentMainScreen extends StatefulWidget {
 
 typedef ScreenBuilder = Widget Function();
 
-enum menu {
-  notice(text: "공지사항", screen: NoticeScreen()),
-  repair(text: "사진관리", screen: RepairScreen()),
-  setting(text: "환경설정", screen: SettingScreen()),
-  account(text: "계정관리", screen: AccountScreen()),
-  work(text: "실적관리", screen: WorkScreen()),
+enum Permission {
+  both,
+  shop,
+  hq
+}
+
+enum Menu {
+  notice(text: "공지사항", permission:Permission.both, screen: NoticeScreen()),
+  shop(text: "공업사관리", permission:Permission.hq, screen: ShopManageScreen()),
+  repair(text: "사진관리", permission:Permission.both, screen: PhotoManageScreen()),
+  account(text: "계정관리", permission:Permission.shop, screen: AccountScreen()),
+  work(text: "실적관리", permission:Permission.shop, screen: WorkScreen()),
+  setting(text: "환경설정", permission:Permission.both, screen: SettingScreen()),
   ;
 
   final String text;
+  final Permission permission;
   final Widget screen;
 
-  const menu({
+  const Menu({
     required this.text,
+    required this.permission,
     required this.screen,
   });
-
 }
 
 class _AgentMainScreenState extends State<AgentMainScreen> {
+  final menus = UserService().user.map((event) {
+    if( event?.repairShopNo == -1) {
+      return Menu.values.where((element) => element.permission!=Permission.shop).toList();
+    } else {
+      return Menu.values.where((element) => element.permission!=Permission.hq).toList();
+    }
+  });
+
   final PageController pageViewController = PageController();
   int currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Row(
-        children: [
-          menuList(),
-          Expanded(child: content()),
-        ],
+      body: StreamBuilder<List<Menu>>(
+        stream: menus,
+        initialData: [],
+        builder: (context, snapshot) {
+          return Row(
+            children: [
+              ExcludeFocus(child: menuList(snapshot.data!)),
+              Expanded(child: content(snapshot.data!)),
+            ],
+          );
+        }
       ),
     );
   }
 
-  Widget menuList() {
-    final user = context.watch<User>()!;
+  Widget menuList(List<Menu> list) {
+    final user = context.watch<User>();
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12),
       color: Colors.blue[50],
@@ -72,16 +94,17 @@ class _AgentMainScreenState extends State<AgentMainScreen> {
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 32),
-          ...menu.values.map((e) {
+          ...list.map((e) {
+            final index = list.indexOf(e);
             return SizedBox(
               width: double.infinity,
               child: TextButton(
                 child: Text(e.text,
                     style:
-                        TextStyle(fontSize: currentIndex == e.index ? 18 : 14)),
+                        TextStyle(fontSize: currentIndex == index ? 18 : 14)),
                 onPressed: () {
                   setState(() {
-                    pageViewController.jumpToPage(e.index);
+                    pageViewController.jumpToPage(index);
                     // menu = e;
                   });
                 },
@@ -111,10 +134,10 @@ class _AgentMainScreenState extends State<AgentMainScreen> {
     );
   }
 
-  Widget content() {
+  Widget content(List<Menu> list) {
     return PageView(
       controller: pageViewController,
-      children: menu.values.map((e) => e.screen).toList(),
+      children: list.map((e) => e.screen).toList(),
       onPageChanged: (index) {
         setState(() {
           currentIndex = index;

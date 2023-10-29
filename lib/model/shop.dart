@@ -16,6 +16,9 @@ class Shop {
         // required this.regDate,
          this.photoSavePath,
          this.repairShopName,
+        this.businessNo,
+        this.ceoName,
+        this.repairShopTelNo,
         // required this.repairShopEmail,
     });
 
@@ -27,6 +30,9 @@ class Shop {
     // DateTime regDate;
     String? photoSavePath;
     String? repairShopName;
+    String? businessNo;
+    String? ceoName;
+    String? repairShopTelNo;
     // String repairShopEmail;
 
     factory Shop.fromJson(Map<dynamic, dynamic> json) => Shop(
@@ -38,6 +44,9 @@ class Shop {
         // regDate: DateTime.fromMillisecondsSinceEpoch(json["regDate"]),
         photoSavePath: json["photoSavePath"],
         repairShopName: json["repairShopName"],
+        businessNo: json["businessNo"],
+        ceoName: json["ceoName"],
+        repairShopTelNo: json["repairShopTelNo"],
         // repairShopEmail: json["repairShopEmail"],
     );
 
@@ -50,6 +59,9 @@ class Shop {
         // "regDate": regDate.millisecondsSinceEpoch,
         "photoSavePath": photoSavePath,
         "repairShopName": repairShopName,
+        "businessNo": businessNo,
+        "ceoName": ceoName,
+        "repairShopTelNo": repairShopTelNo,
         // "repairShopEmail": repairShopEmail,
     };
 }

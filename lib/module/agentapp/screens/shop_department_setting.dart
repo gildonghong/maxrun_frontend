@@ -7,14 +7,14 @@ import 'package:provider/provider.dart';
 
 import 'department_form.dart';
 
-class DepartmentSetting extends StatefulWidget {
-  const DepartmentSetting({super.key});
+class ShopDepartmentSetting extends StatefulWidget {
+  const ShopDepartmentSetting({super.key});
 
   @override
-  State<DepartmentSetting> createState() => _DepartmentSettingState();
+  State<ShopDepartmentSetting> createState() => _ShopDepartmentSettingState();
 }
 
-class _DepartmentSettingState extends State<DepartmentSetting> {
+class _ShopDepartmentSettingState extends State<ShopDepartmentSetting> {
   @override
   Widget build(BuildContext context) {
     return InputDecorator(
