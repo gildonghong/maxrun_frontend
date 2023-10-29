@@ -45,8 +45,9 @@ class DepartmentService {
         await api.post<Map<String, dynamic>>("/repairshop/department", data: {
       "departmentName": departmentName,
     });
-    final d = Department.fromJson(res.data!);
-    departments.value = departments.value..add(d);
+    // final d = Department.fromJson(res.data!);
+    // departments.value = departments.value..add(d);
+    fetch();
   }
 
   Future modify(int departmentNo, String departmentName)async {
@@ -55,15 +56,16 @@ class DepartmentService {
       "departmentNo": departmentNo,
       "departmentName": departmentName,
     });
-    final d = Department.fromJson(res.data!);
-    final listValue = departments.value;
-    final index = listValue.indexWhere((element) => element.departmentNo == departmentNo);
-
-    if( index > -1) {
-      listValue[index] = d;
-    } else {
-      listValue.add(d);
-    }
-    departments.value = listValue;
+    // final d = Department.fromJson(res.data!);
+    // final listValue = departments.value;
+    // final index = listValue.indexWhere((element) => element.departmentNo == departmentNo);
+    //
+    // if( index > -1) {
+    //   listValue[index] = d;
+    // } else {
+    //   listValue.add(d);
+    // }
+    // departments.value = listValue;
+    fetch();
   }
 }

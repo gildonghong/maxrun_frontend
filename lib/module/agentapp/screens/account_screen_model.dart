@@ -7,28 +7,38 @@ import 'package:photoapp/extension/datetime_ext.dart';
 import 'package:photoapp/model/department.dart';
 import 'package:photoapp/module/agentapp/screens/account_grid_form.dart';
 import 'package:photoapp/service/account_service.dart';
+import 'package:photoapp/service/department_service.dart';
 import 'package:photoapp/ui/grid.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+import 'package:tuple/tuple.dart';
 
 import '../../../model/user.dart';
 
 class AccountScreenModel extends DataGridSource {
   bool shouldRecalc = false;
 
+  late StreamSubscription<Tuple2<List<Account>, List<Department>>> sub;
+
   List<Account> get list => AccountService().accounts.value;
   final gridFormList = <AccountGridForm>[];
-  late StreamSubscription<List<Account>> sub;
 
   @override
   List<DataGridRow> rows = [];
 
-  AccountScreenModel(List<Department> departments) {
-    sub = AccountService().accounts.listen((value) {
+  AccountScreenModel() {
+    // List<Department> departments
+    sub = Rx.combineLatest2(AccountService().accounts, DepartmentService().departments, (a, b) {
+      return Tuple2(a, b);
+    }).listen((value) {
+      final accounts = value.item1;
+      final depts = value.item2;
+
       for (var element in gridFormList) {
         element.dispose();
       }
       gridFormList.clear();
-      gridFormList.addAll(value.map((e) => AccountGridForm(account: e, departments:departments)));
+      gridFormList.addAll(accounts.map((e) => AccountGridForm(account: e, departments:depts)));
       rows = list.map<DataGridRow>((e) {
         return DataGridRow(cells: [
           DataGridCell<int>(columnName: 'No', value: e.workerNo),

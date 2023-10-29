@@ -49,15 +49,18 @@ class AccountService {
 
     if(res.data!=null) {
       account = Account.fromJson(res.data!);
-    }
-    final index = accounts.value
-        .indexWhere((element) => element.workerNo == account.workerNo);
+      final index = accounts.value
+          .indexWhere((element) => element.workerNo == account.workerNo);
 
-    if (index > -1) {
-      accounts.value = accounts.value..[index] = account;
-    } else {
-      accounts.value = accounts.value..add(account);
+      if (index > -1) {
+        accounts.value = accounts.value..[index] = account;
+      } else {
+        accounts.value = accounts.value..add(account);
+      }
+    } else{
+      fetch();
     }
+
 
     return account;
   }

@@ -12,11 +12,12 @@ class AccountScreen extends StatefulWidget {
   State<AccountScreen> createState() => _AccountScreenState();
 }
 
-class _AccountScreenState extends State<AccountScreen> with AutomaticKeepAliveClientMixin {
+class _AccountScreenState extends State<AccountScreen>
+    with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
-  late final AccountScreenModel model;
+  final model = AccountScreenModel();
 
   @override
   void dispose() {
@@ -25,34 +26,32 @@ class _AccountScreenState extends State<AccountScreen> with AutomaticKeepAliveCl
   }
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    final departments = context.read<List<Department>>();
-    model = AccountScreenModel(departments);
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton:floatingActionButton(),
+      floatingActionButton: floatingActionButton(),
       body: list(),
     );
   }
 
-  Widget floatingActionButton(){
+  Widget floatingActionButton() {
     final departments = context.watch<List<Department>>();
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        FloatingActionButton(onPressed: (){
-          AccountService().add(departments.first);
-        },child:Icon(Icons.add) ,),
-        SizedBox(height:12),
-        FloatingActionButton(onPressed: (){
-          AccountService().fetch();
-        },child:Icon(Icons.refresh) ,),
+        FloatingActionButton(
+          onPressed: () {
+            AccountService().add(departments.first);
+          },
+          child: Icon(Icons.add),
+        ),
+        SizedBox(height: 12),
+        FloatingActionButton(
+          onPressed: () {
+            AccountService().fetch();
+          },
+          child: Icon(Icons.refresh),
+        ),
       ],
     );
   }
