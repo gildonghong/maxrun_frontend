@@ -42,8 +42,8 @@ class NoticeScreenModel extends DataGridSource {
     rows = list.map<DataGridRow>((e) {
       return DataGridRow(cells: [
         DataGridCell<int>(columnName: 'No', value: e.noticeNo),
-        DataGridCell<Notice>(
-            columnName: '내용', value: e),
+        DataGridCell<String>(
+            columnName: '내용', value: e.notice.replaceAll("\n", " ")),
         DataGridCell<String>(columnName: '일자', value: e.noticeDate.yyyyMMdd),
       ]);
     }).toList();
@@ -54,7 +54,7 @@ class NoticeScreenModel extends DataGridSource {
   List<GridColumn> getColumns() {
     final columns = <GridColumn>[
       column(columnName: 'No', width: 80),
-      column(columnName: '제목'),
+      column(columnName: '내용'),
       column(columnName: '일자', width: 100),
     ];
 
@@ -73,15 +73,12 @@ class NoticeScreenModel extends DataGridSource {
     return DataGridRowAdapter(
         cells: row.getCells().map<Widget>((e) {
           if (e.columnName == "내용") {
-            final notice = e.value as Notice;
             return Container(
                 alignment: Alignment.centerLeft,
-                child: TextButton(
-                  child: Text(notice.notice,
-                  ),
-                  onPressed: () {
-                    openDialog(notice);
-                  },
+                child: Text(
+                  e.value as String,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
                 ));
           } else {
             return Container(
@@ -95,59 +92,6 @@ class NoticeScreenModel extends DataGridSource {
     // }
   }
 
-  openDialog(Notice? notice) {
-    content = notice?.notice ?? "";
-    final nav = Navigator.of(formKey.currentContext!);
-    showDialog(
-      context: formKey.currentContext!,
-      builder: (context) =>
-          Form(
-            key: formKey,
-            child: AlertDialog(
-              title: Text(
-                  notice == null ? "공지사항 등록" : "공지사항 수정", style: TextStyle()),
-              content: SizedBox(
-                width: 400,
-                child: TextFormField(
-                  decoration: InputDecoration(labelText: "내용"),
-                  validator: (value) {
-                    if (value
-                        ?.trim()
-                        .isNotEmpty != true) {
-                      return "내용을 입력하세요";
-                    }
-                  },
-                  onChanged: (value) {
-                    content = value;
-                  },
-                  initialValue: content,
-                  minLines: 10,
-                  maxLines: 20,
-                ),
-              ),
-              actions: [
-                TextButton(
-                  child: Text("취소", style: TextStyle()),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                TextButton(
-                  child: Text("등록", style: TextStyle()),
-                  onPressed: () async {
-                    if (formKey.currentState?.validate() != true) {
-                      return;
-                    }
-                    await save(notice?.noticeNo);
-                    nav.pop();
-                    EasyLoading.showSuccess("공지사항을 등록했습니다.");
-                  },
-                )
-              ],
-            ),
-          ),
-    );
-  }
 
 
   Future<void> save(int? noticeNo) async {
