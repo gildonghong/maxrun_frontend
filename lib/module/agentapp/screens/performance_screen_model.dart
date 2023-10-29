@@ -1,22 +1,16 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:file_saver/file_saver.dart';
-import 'package:photoapp/io/save_file_mobile.dart'
-    if (dart.library.html) 'package:photoapp/io/save_file_web.dart' as helper;
 import 'package:flutter/material.dart';
 import 'package:photoapp/extension/datetime_ext.dart';
 import 'package:photoapp/model/account.dart';
+import 'package:photoapp/model/performance.dart';
 import 'package:photoapp/service/api_service.dart';
 import 'package:photoapp/ui/grid.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:syncfusion_flutter_datagrid_export/export.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart';
-
-import '../../../model/user.dart';
-import '../../../model/performance.dart';
 
 class PerformanceScreenModel extends DataGridSource {
   bool shouldRecalc = false;
