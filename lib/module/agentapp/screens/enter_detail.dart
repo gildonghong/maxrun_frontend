@@ -105,7 +105,7 @@ class _EnterDetailState extends State<EnterDetail> {
         stream: photos,
         initialData: [],
         builder: (context, snapshot) {
-          final photos = snapshot.data!;
+          final photos = snapshot.data ?? [];
           return Wrap(
               alignment: WrapAlignment.start,
               clipBehavior: Clip.hardEdge,

@@ -8,7 +8,7 @@ import 'package:photoapp/service/user_service.dart';
 import 'package:provider/provider.dart';
 
 import 'setting_screen.dart';
-import 'work_screen.dart';
+import 'performance_screen.dart';
 
 
 class AgentMainScreen extends StatefulWidget {
@@ -31,7 +31,7 @@ enum Menu {
   shop(text: "공업사관리", permission:Permission.hq, screen: ShopManageScreen()),
   repair(text: "사진관리", permission:Permission.both, screen: PhotoManageScreen()),
   account(text: "계정관리", permission:Permission.shop, screen: AccountScreen()),
-  work(text: "실적관리", permission:Permission.shop, screen: WorkScreen()),
+  work(text: "실적관리", permission:Permission.shop, screen: PerformanceScreen()),
   setting(text: "환경설정", permission:Permission.both, screen: SettingScreen()),
   ;
 

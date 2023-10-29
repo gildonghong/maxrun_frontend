@@ -27,8 +27,8 @@ class NoticeScreenModel extends DataGridSource {
   }
 
   Future<void> fetch() async {
-    // final res = await api.get<List<dynamic>>("/notice/list", );
-    // list = Json.fromList(res.data!).listOfValue((p0) => Notice.fromJson(p0)).toList();
+    final res = await api.get<List<dynamic>>("/notice/list", );
+    list = Json.fromList(res.data!).listOfValue((p0) => Notice.fromJson(p0)).toList();
 
     rows = list.map<DataGridRow>((e) {
       return DataGridRow(cells: [

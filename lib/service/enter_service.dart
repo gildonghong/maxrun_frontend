@@ -55,8 +55,9 @@ class EnterService {
         queryParameters: {
       "reqNo": reqNo,
     });
+    final list = res.data!.map((e) => Photo.fromJson(e)).toList();
 
-    return res.data!.map((e) => Photo.fromJson(e)).toList();
+    return list;
   }
 
   Future<int> enterIn(
