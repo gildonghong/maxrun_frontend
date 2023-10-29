@@ -16,7 +16,7 @@ class ShopListModel {
     return a
         .where((element) =>
             b.text.isEmpty ||
-            element.repairShopName?.trim().contains(b.text.trim()) == true)
+            element.repairShopName?.trim().toLowerCase().contains(b.text.trim().toLowerCase()) == true)
         .toList();
   });
   late final selected =

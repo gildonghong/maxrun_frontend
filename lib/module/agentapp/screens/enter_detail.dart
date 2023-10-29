@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:photoapp/extension/datetime_ext.dart';
 import 'package:photoapp/model/enter.dart';
 import 'package:photoapp/model/photo.dart';
@@ -19,6 +20,10 @@ class EnterDetail extends StatefulWidget {
 
 class _EnterDetailState extends State<EnterDetail> {
   Stream<Enter?> get enter => widget.enter;
+  late final photos = enter.asyncMap((event) async {
+    return event == null ? <Photo>[] : await EnterService().getPhotos(event.reqNo);
+  });
+
 
   @override
   Widget build(BuildContext context) {
@@ -57,17 +62,37 @@ class _EnterDetailState extends State<EnterDetail> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           FilledButton(
-            onPressed: enter.maxrunTalkYn ? null : () {
-
-            },
-            child: Text(enter.maxrunTalkYn?"케미컬 청구신청 완료":"케미컬 청구신청", style: TextStyle()),
+            onPressed: enter.maxrunTalkYn
+                ? null
+                : () async {
+                    final result =
+                        await EnterService().postChemicalRequestMessage(enter);
+                    EasyLoading.showSuccess(
+                        result ? "케미컬 청구를 신청했습니다." : "오류가 발생했습니다.");
+                  },
+            child: Text(enter.maxrunTalkYn ? "케미컬 청구신청 완료" : "케미컬 청구신청",
+                style: TextStyle()),
           ),
           SizedBox(width: 12),
           FilledButton(
-            onPressed: enter.customerTalkYn ? null : () {
-
-            },
-            child: Text(enter.customerTalkYn ? "작업완료 알림톡 신청완료":"작업완료 알림톡 발송", style: TextStyle()),
+            onPressed: enter.customerTalkYn
+                ? null
+                : () async {
+                    if (enter.ownerCpNo?.isNotEmpty != true) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        duration: Duration(seconds: 2),
+                        backgroundColor: Colors.red[800]!,
+                        content: Text("차주 연락처가 없습니다.", style: TextStyle()),
+                      ));
+                      return;
+                    }
+                    final result =
+                        await EnterService().postRepairCompleteMessage(enter);
+                    EasyLoading.showSuccess(
+                        result ? "작업완료 알림톡을 발송했습니다." : "오류가 발생했습니다.");
+                  },
+            child: Text(enter.customerTalkYn ? "작업완료 알림톡 신청완료" : "작업완료 알림톡 발송",
+                style: TextStyle()),
           ),
         ],
       ),
@@ -76,8 +101,8 @@ class _EnterDetailState extends State<EnterDetail> {
 
   Widget photoList(Enter enter) {
     return SingleChildScrollView(
-      child: FutureBuilder<List<Photo>>(
-        future: EnterService().getPhotos(enter.reqNo),
+      child: StreamBuilder<List<Photo>>(
+        stream: photos,
         initialData: [],
         builder: (context, snapshot) {
           final photos = snapshot.data!;
@@ -101,12 +126,10 @@ class _EnterDetailState extends State<EnterDetail> {
             fit: BoxFit.contain,
             image: NetworkImage(photo.serverFile)),
         Container(
-          width: 300,
-          color: Colors.white.withOpacity(0.5),
+            width: 300,
+            color: Colors.white.withOpacity(0.5),
             child: Text(photo.clientFileName,
-                textAlign: TextAlign.center,
-                style:TextStyle(
-            ))),
+                textAlign: TextAlign.center, style: TextStyle())),
       ],
     );
   }
@@ -117,7 +140,7 @@ class _EnterDetailState extends State<EnterDetail> {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("삭제하시겠습니까?", style: TextStyle()),
+        title: Text("메모를 삭제하시겠습니까?", style: TextStyle()),
         actions: [
           TextButton(
             child: Text("취소", style: TextStyle()),

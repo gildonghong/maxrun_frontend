@@ -5,16 +5,16 @@ import 'package:multiple_stream_builder/multiple_stream_builder.dart';
 
 import 'enter_list_model.dart';
 
-class EnterListView extends StatefulWidget {
+class EnterList extends StatefulWidget {
   EnterListModel model;
 
-  EnterListView({required this.model, super.key});
+  EnterList({required this.model, super.key});
 
   @override
-  State<EnterListView> createState() => _EnterListViewState();
+  State<EnterList> createState() => _EnterListState();
 }
 
-class _EnterListViewState extends State<EnterListView> {
+class _EnterListState extends State<EnterList> {
   EnterListModel get model => widget.model;
 
   @override
@@ -80,6 +80,13 @@ class _EnterListViewState extends State<EnterListView> {
   }
 
   Widget enterList(List<Enter> list, int? selectedReqNo) {
+    if( list.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.only(top:12.0),
+        child: Text("검색결과가 없습니다.", style:TextStyle(fontSize: 16)),
+      );
+    }
+
     return ListView.separated(
       separatorBuilder: (context, index) => SizedBox(height: 2),
       itemCount: list.length,
@@ -94,7 +101,7 @@ class _EnterListViewState extends State<EnterListView> {
         style: FilledButton.styleFrom(
             backgroundColor: selectedReqNo == e.reqNo
                 ? Colors.blue
-                : Colors.grey[350],
+                : Colors.blueAccent.withOpacity(0.15),
             foregroundColor:
             selectedReqNo == e.reqNo ? Colors.white : Colors.black87,
             elevation: 0,

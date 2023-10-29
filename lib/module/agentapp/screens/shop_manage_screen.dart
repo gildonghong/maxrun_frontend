@@ -32,7 +32,7 @@ class _ShopManageScreenState extends State<ShopManageScreen>
           Container(
               padding: EdgeInsets.all(12),
               width: 240,
-              child: ShopSearchView(
+              child: ShopList(
                 model: searchModel,
               )),
           VerticalDivider(

@@ -33,7 +33,8 @@ class _PhotoManageScreenState extends State<PhotoManageScreen>
     super.initState();
 
     sub = shopListModel.selected.listen((value) {
-      enterListModel.search(repairShopNo:value?.repairShopNo);
+      enterListModel.repairShopNo = value?.repairShopNo;
+      enterListModel.search();
     });
   }
 
@@ -61,7 +62,7 @@ class _PhotoManageScreenState extends State<PhotoManageScreen>
                 Container(
                     padding: EdgeInsets.all(12),
                     width: 240,
-                    child: ShopSearchView(model: shopListModel)),
+                    child: ShopList(model: shopListModel)),
                 VerticalDivider(
                   thickness: 1,
                   width: 1,
@@ -72,7 +73,7 @@ class _PhotoManageScreenState extends State<PhotoManageScreen>
           Container(
               padding: EdgeInsets.all(12),
               width: 240,
-              child: EnterListView(
+              child: EnterList(
                 model: enterListModel,
               )),
           VerticalDivider(

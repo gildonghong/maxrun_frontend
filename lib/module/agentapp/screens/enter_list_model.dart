@@ -9,6 +9,7 @@ import 'package:rxdart/rxdart.dart';
 class EnterListModel {
   final searchController = TextEditingController();
   final selectedReqNo = BehaviorSubject<int?>.seeded(null);
+  int? repairShopNo;
   late final list = Rx.combineLatest2(
       EnterService().list, searchController.toValueStream(replayValue: true),
           (a, b) {
@@ -30,7 +31,7 @@ class EnterListModel {
     searchController.dispose();
   }
 
-  Future<List<Enter>> search({int? repairShopNo})async {
+  Future<List<Enter>> search()async {
     final list = await EnterService().fetch(
         repairShopNo: repairShopNo, carLicenseNo: searchController.text.trim());
 

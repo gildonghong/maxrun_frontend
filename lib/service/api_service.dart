@@ -11,7 +11,9 @@ import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 var retryCount = 0;
 final interceptor = InterceptorsWrapper(
   onRequest: (options, handler) async {
-    EasyLoading.show();
+    if( options.headers["no_loading"] != true) {
+      EasyLoading.show();
+    }
 
     final token = UserService().user.getValue()?.uAtoken;
 
@@ -23,7 +25,9 @@ final interceptor = InterceptorsWrapper(
   },
   onResponse: (e, handler) {
     retryCount = 0;
-    EasyLoading.dismiss();
+    if( e.requestOptions.headers["no_loading"] != true) {
+      EasyLoading.dismiss();
+    }
     handler.next(e);
   },
   onError: (error, handler) async {

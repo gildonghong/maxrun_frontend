@@ -46,7 +46,13 @@ class EnterService {
 
   Future<List<Photo>> getPhotos(int reqNo) async {
     final res = await api
-        .get<List<dynamic>>("/repairshop/enter/photo/list", queryParameters: {
+        .get<List<dynamic>>("/repairshop/enter/photo/list",
+        options: Options(
+          headers: {
+            "no_loading": true,
+          }
+        ),
+        queryParameters: {
       "reqNo": reqNo,
     });
 
@@ -73,13 +79,47 @@ class EnterService {
     return res.data!["reqNo"];
   }
 
-  Future postChemicalRequestMessage() async {
-    await api.post("http://www.maxrunphoto.com/repairshop/message");
+  Future<bool> postChemicalRequestMessage(Enter enter) async {
+    final res = await api.post<Map<String, dynamic>>(
+        "http://www.maxrunphoto.com/repairshop/message",
+        data: {
+          "target": "maxrun",
+          "carLicenseNo": enter.carLicenseNo,
+          "reqNo": enter.reqNo,
+        });
+
+    final success = res.data?["result"] == "success";
+
+    if( success) {
+      enter.maxrunTalkYn = true;
+      list.add(list.value);
+    }
+
+    return success;
   }
 
-  Future postRepairCompleteMessage() async {
-    await api.post("http://www.maxrunphoto.com/repairshop/message");
+  Future postRepairCompleteMessage(Enter enter) async {
+    final res = await api.post<Map<String, dynamic>>(
+        "http://www.maxrunphoto.com/repairshop/message",
+        data: {
+          "target": "customer",
+          "carLicenseNo": enter.carLicenseNo,
+          "reqNo": enter.reqNo,
+          "ownerCpNo": enter.ownerCpNo,
+          "ownerName": enter.ownerName,
+        });
+
+    final success = res.data?["result"] == "success";
+
+    if( success) {
+      enter.customerTalkYn = true;
+      list.add(list.value);
+    }
+
+
+    return success;
   }
+
 
   Future addMemo(Enter enter, String text) async {
     final res =
@@ -97,8 +137,11 @@ class EnterService {
   }
 
   Future removeMemo(Enter enter, Memo memo) async {
+    final res = await api.post<int>("/repairshop/carcare/memo/delete", data: {
+      "memoNo": memo.memoNo,
+    });
+
     enter.memo.remove(memo);
-    await enterIn(reqNo: enter.reqNo, memo: enter.memo);
     list.add(list.value);
   }
 }

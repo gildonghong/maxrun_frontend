@@ -24,6 +24,8 @@ class Enter {
   String carLicenseNo;
   bool maxrunTalkYn;
   bool customerTalkYn;
+  String? ownerName;
+  String? ownerCpNo;
 
   List<Memo> memo;
 
@@ -39,6 +41,8 @@ class Enter {
     required this.memo,
     required this.maxrunTalkYn,
     required this.customerTalkYn,
+    this.ownerName,
+    this.ownerCpNo
   });
 
   factory Enter.fromJson(Map<String, dynamic> json) {
@@ -57,6 +61,8 @@ class Enter {
         customerTalkYn: json["customerTalkYn"] =="Y",
         // memo: (json["memo"] as List<dynamic>? ?? []).map((e)=>Memo.fromJson(e)).toList(),
         memo: j["memo"].listOfValue((p0) => Memo.fromJson(p0),),
+      ownerCpNo: json["ownerCpNo"],
+      ownerName: json["ownerName"]
     );
 
     // if( kDebugMode) {
@@ -78,5 +84,7 @@ class Enter {
     "memo": memo.map((e) => e.toJson()),
     "maxrunTalkYn":maxrunTalkYn ? "Y":"N",
     "customerTalkYn":customerTalkYn ? "Y":"N",
+    "ownerCpNo":ownerCpNo,
+    "ownerName":ownerName,
   };
 }

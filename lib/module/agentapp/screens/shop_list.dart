@@ -4,16 +4,16 @@ import 'package:photoapp/service/shop_service.dart';
 
 import 'shop_list_model.dart';
 
-class ShopSearchView extends StatefulWidget {
+class ShopList extends StatefulWidget {
   ShopListModel model;
 
-  ShopSearchView({required this.model,super.key});
+  ShopList({required this.model,super.key});
 
   @override
-  State<ShopSearchView> createState() => _ShopSearchViewState();
+  State<ShopList> createState() => _ShopListState();
 }
 
-class _ShopSearchViewState extends State<ShopSearchView> {
+class _ShopListState extends State<ShopList> {
   ShopListModel get model=>widget.model;
 
   @override
@@ -92,6 +92,13 @@ class _ShopSearchViewState extends State<ShopSearchView> {
   }
 
   Widget listView(List<Shop> list) {
+    if( list.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.only(top:12.0),
+        child: Text("검색결과가 없습니다.", style:TextStyle(fontSize: 16)),
+      );
+    }
+
     return ListView.separated(
       separatorBuilder: (context, index) => SizedBox(height: 2),
       itemCount: list.length,
@@ -110,7 +117,7 @@ class _ShopSearchViewState extends State<ShopSearchView> {
               style: FilledButton.styleFrom(
                   backgroundColor: selectedNo == e.repairShopNo
                       ? Colors.blue
-                      : Colors.grey[350],
+                      : Colors.blueAccent.withOpacity(0.15),
                   foregroundColor: selectedNo == e.repairShopNo
                       ? Colors.white
                       : Colors.black87,
