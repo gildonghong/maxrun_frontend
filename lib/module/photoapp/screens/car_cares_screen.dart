@@ -47,26 +47,31 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Row(
                 children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: searchController,
-                      textAlign: TextAlign.center,
-                      onEditingComplete: () {
-                        CarCareService().fetch(searchController.text);
-                      },
-                      decoration: InputDecoration(
-                        hintText: "차량 번호 검색",
-                        prefixIcon: Icon(Icons.search),
-                        suffixIcon: SizedBox(width: 40),
-                      ),
-                    ),
-                  ),
-                  // SizedBox(width: 8),
                   IconButton(
                     style: IconButton.styleFrom(padding: EdgeInsets.zero),
                     onPressed: showAccountPopup,
                     icon: Icon(Icons.account_circle_rounded, size: 36,color: colorPrimary,),
-                  )
+                  ),
+                  Expanded(
+                    child: TextFormField(
+                      controller: searchController,
+                      textAlign: TextAlign.center,
+                      textInputAction: TextInputAction.search,
+                      onEditingComplete: () {
+                        CarCareService().fetch(searchController.text);
+                        FocusScope.of(context).unfocus();
+                      },
+                      decoration: InputDecoration(
+                        hintText: "차량 번호 검색",
+                        suffixIcon: IconButton(icon: Icon(Icons.search,size: 24,),onPressed: () {
+                          CarCareService().fetch(searchController.text);
+                          FocusScope.of(context).unfocus();
+                        },),
+                      ),
+                    ),
+                  ),
+                  // SizedBox(width: 8),
+
                 ],
               ),
             ),
