@@ -1,23 +1,23 @@
-import 'dart:io';
+import 'dart:convert';
 
+import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
+import 'package:dio_cookie_manager/dio_cookie_manager.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:photoapp/env.dart';
-import 'package:photoapp/model/user.dart';
 import 'package:photoapp/service/user_service.dart';
-import 'package:cookie_jar/cookie_jar.dart';
-import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 
 var retryCount = 0;
 final interceptor = InterceptorsWrapper(
   onRequest: (options, handler) async {
-    if( options.headers["no_loading"] != true) {
+    if( options.headers["no_indicator"] != true) {
       EasyLoading.show();
     }
 
     final token = UserService().user.getValue()?.uAtoken;
 
-    if (token?.isNotEmpty == true) {
+    if (token?.isNotEmpty == true && options.uri.path != "/login") {
       options.headers["Authorization"] = "Bearer $token";
     }
 
@@ -25,7 +25,7 @@ final interceptor = InterceptorsWrapper(
   },
   onResponse: (e, handler) {
     retryCount = 0;
-    if( e.requestOptions.headers["no_loading"] != true) {
+    if( e.requestOptions.headers["no_indicator"] != true) {
       EasyLoading.dismiss();
     }
     handler.next(e);
@@ -37,6 +37,10 @@ final interceptor = InterceptorsWrapper(
       message = fe.source;
     } else {
       message = error.response?.data ?? "시스템 오류가 발생했습니다.";
+      if( message == "Unauthorized") {
+        UserService().logout();
+
+      }
     }
     EasyLoading.showError(message);
     // handler.next(error);
@@ -52,6 +56,7 @@ class ApiHelper {
     contentType: 'application/x-www-form-urlencoded',
     responseType: ResponseType.json,
     receiveDataWhenStatusError: true,
+    followRedirects: true,
     validateStatus: (status) => status == 200,
   );
 }
@@ -69,5 +74,6 @@ final Dio api = Dio(ApiHelper.option)
         requestHeader: true,
         request: true,
         responseHeader: true,
-        responseBody: true)
+        responseBody: true,
+    error: true,)
   ]);

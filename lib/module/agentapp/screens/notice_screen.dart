@@ -47,7 +47,7 @@ class _NoticeScreenState extends State<NoticeScreen>
       columns: model.getColumns(),
       selectionMode: SelectionMode.none,
       onCellTap: (details) {
-        if(details.column.columnName=='내용') {
+        if(details.column.columnName=='제목') {
           final notice = model.list[details.rowColumnIndex.rowIndex-1];
           openDialog(notice,user);
         }
@@ -56,7 +56,7 @@ class _NoticeScreenState extends State<NoticeScreen>
   }
 
   openDialog(Notice? notice, User user) {
-
+    model.title = notice?.noticeTitle;
     model.content = notice?.notice ?? "";
     showDialog(
       context: context,
@@ -67,25 +67,49 @@ class _NoticeScreenState extends State<NoticeScreen>
               title: Text(
                   user.repairShopNo!=-1 ?"공지사항":
                   notice == null ? "공지사항 등록" : "공지사항 수정", style: TextStyle()),
-              content: SizedBox(
-                width: 400,
-                child: TextFormField(
-                  focusNode: user.repairShopNo==-1?null:AlwaysDisabledFocusNode(),
-                  decoration: InputDecoration(labelText: "내용"),
-                  validator: (value) {
-                    if (value
-                        ?.trim()
-                        .isNotEmpty != true) {
-                      return "내용을 입력하세요";
-                    }
-                  },
-                  onChanged: (value) {
-                    model.content = value;
-                  },
-                  initialValue: model.content,
-                  minLines: 10,
-                  maxLines: 20,
-                ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: 400,
+                    child: TextFormField(
+                      focusNode: user.repairShopNo==-1?null:AlwaysDisabledFocusNode(),
+                      decoration: InputDecoration(labelText: "제목"),
+                      validator: (value) {
+                        if (value
+                            ?.trim()
+                            .isNotEmpty != true) {
+                          return "제목을 입력하세요";
+                        }
+                      },
+                      onChanged: (value) {
+                        model.title = value;
+                      },
+                      initialValue: model.title,
+                    ),
+                  ),
+                  SizedBox(height:12),
+                  SizedBox(
+                    width: 400,
+                    child: TextFormField(
+                      focusNode: user.repairShopNo==-1?null:AlwaysDisabledFocusNode(),
+                      decoration: InputDecoration(labelText: "내용"),
+                      validator: (value) {
+                        if (value
+                            ?.trim()
+                            .isNotEmpty != true) {
+                          return "내용을 입력하세요";
+                        }
+                      },
+                      onChanged: (value) {
+                        model.content = value;
+                      },
+                      initialValue: model.content,
+                      minLines: 10,
+                      maxLines: 20,
+                    ),
+                  ),
+                ],
               ),
               actions: [
                 TextButton(
@@ -107,11 +131,43 @@ class _NoticeScreenState extends State<NoticeScreen>
                       EasyLoading.showSuccess("공지사항을 등록했습니다.");
                     },
                   ),
+                ),
+                Visibility(
+                  visible: user.repairShopNo ==-1 && notice != null,
+                  child: TextButton(
+                    child: Text("삭제", style: TextStyle(color: Colors.red)),
+                    onPressed: () async {
+                      final result = await confirmDeleteDialog(notice!);
+                      if( result) {
+                        Navigator.of(context).pop();
+                      }
+                    },
+                  ),
                 )
               ],
             ),
           ),
     );
+  }
+
+  confirmDeleteDialog(Notice notice) async {
+    final result = await showDialog(context: context, builder: (context) => AlertDialog(
+      title: Text("공지사항을 삭제하시겠습니까?", style:TextStyle()),
+      actions: [
+        TextButton(child: Text("취소", style:TextStyle()),onPressed: (){
+          Navigator.of(context).pop(false);
+        }, ),
+        TextButton(child: Text("삭제", style:TextStyle(color: Colors.red)),onPressed: (){
+          Navigator.of(context).pop(true);
+        }, ),
+      ],
+    ),);
+
+    if(result ==true) {
+      await model.delete(notice.noticeNo);
+      EasyLoading.showSuccess("공지사항을 삭제했습니다.");
+    }
+    return result;
   }
 
 

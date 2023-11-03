@@ -72,7 +72,7 @@ class _PhotoManageScreenState extends State<PhotoManageScreen>
           ),
           Container(
               padding: EdgeInsets.all(12),
-              width: 240,
+              width: 280,
               child: EnterList(
                 model: enterListModel,
               )),

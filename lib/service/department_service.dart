@@ -68,4 +68,23 @@ class DepartmentService {
     // departments.value = listValue;
     fetch();
   }
+
+  Future delete(int departmentNo)async {
+    final res =
+    await api.post<Map<String, dynamic>>("/repairshop/department", data: {
+      "departmentNo": departmentNo,
+      "delYn": 'Y',
+    });
+    // final d = Department.fromJson(res.data!);
+    // final listValue = departments.value;
+    // final index = listValue.indexWhere((element) => element.departmentNo == departmentNo);
+    //
+    // if( index > -1) {
+    //   listValue[index] = d;
+    // } else {
+    //   listValue.add(d);
+    // }
+    // departments.value = listValue;
+    fetch();
+  }
 }

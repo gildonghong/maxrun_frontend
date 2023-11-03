@@ -15,6 +15,7 @@ class NoticeScreenModel extends DataGridSource {
   bool shouldRecalc = false;
   var list = <Notice>[];
 
+  String? title;
   String? content;
 
   final formKey = GlobalKey<FormState>();
@@ -43,7 +44,7 @@ class NoticeScreenModel extends DataGridSource {
       return DataGridRow(cells: [
         DataGridCell<int>(columnName: 'No', value: e.noticeNo),
         DataGridCell<String>(
-            columnName: '내용', value: e.notice.replaceAll("\n", " ")),
+            columnName: '제목', value: e.noticeTitle),
         DataGridCell<String>(columnName: '일자', value: e.noticeDate.yyyyMMdd),
       ]);
     }).toList();
@@ -54,7 +55,7 @@ class NoticeScreenModel extends DataGridSource {
   List<GridColumn> getColumns() {
     final columns = <GridColumn>[
       column(columnName: 'No', width: 80),
-      column(columnName: '내용'),
+      column(columnName: '제목'),
       column(columnName: '일자', width: 100),
     ];
 
@@ -72,11 +73,11 @@ class NoticeScreenModel extends DataGridSource {
   DataGridRowAdapter buildRow(DataGridRow row) {
     return DataGridRowAdapter(
         cells: row.getCells().map<Widget>((e) {
-          if (e.columnName == "내용") {
+          if (e.columnName == "제목") {
             return Container(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  e.value as String,
+                  e.value ?? "",
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
                 ));
@@ -97,7 +98,17 @@ class NoticeScreenModel extends DataGridSource {
   Future<void> save(int? noticeNo) async {
     await api.post<Map<String, dynamic>>("/notice", data: {
       "noticeNo": noticeNo,
+      "title": title,
       "notice": content,
+    });
+
+    await fetch();
+  }
+
+  Future<void> delete(int noticeNo) async {
+    await api.post<Map<String, dynamic>>("/notice", data: {
+      "noticeNo": noticeNo,
+      "delYn": 'Y',
     });
 
     await fetch();

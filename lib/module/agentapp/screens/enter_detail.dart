@@ -21,9 +21,10 @@ class EnterDetail extends StatefulWidget {
 class _EnterDetailState extends State<EnterDetail> {
   Stream<Enter?> get enter => widget.enter;
   late final photos = enter.asyncMap((event) async {
-    return event == null ? <Photo>[] : await EnterService().getPhotos(event.reqNo);
+    return event == null
+        ? <Photo>[]
+        : await EnterService().getPhotos(event.reqNo);
   });
-
 
   @override
   Widget build(BuildContext context) {
@@ -38,9 +39,9 @@ class _EnterDetailState extends State<EnterDetail> {
 
           return Column(
             children: [
-              Expanded(flex: 2, child: photoList(enter)),
+              bar(enter),
               SizedBox(height: 12),
-              message(enter),
+              Expanded(flex: 2, child: photoList(enter)),
               SizedBox(height: 12),
               Expanded(
                 flex: 1,
@@ -51,7 +52,9 @@ class _EnterDetailState extends State<EnterDetail> {
         });
   }
 
-  Widget message(Enter enter) {
+  final formKey = GlobalKey<FormState>();
+
+  Widget bar(Enter enter) {
     return Container(
       decoration: BoxDecoration(
           color: Colors.blue.withOpacity(0.04),
@@ -61,6 +64,43 @@ class _EnterDetailState extends State<EnterDetail> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          SizedBox(
+              width: 140,
+              child: Form(
+                key: formKey,
+                child: TextFormField(
+                  initialValue: enter.carLicenseNo,
+                  onChanged: (value) {
+                    enter.carLicenseNo = value;
+                  },
+                  validator: (value) {
+                    if (value?.trim().isNotEmpty != true) {
+                      return "차량번호를 입력하세요";
+                    }
+                  },
+                  decoration: InputDecoration(labelText: "차량번호"),
+                ),
+              )),
+          SizedBox(width: 8),
+          FilledButton(
+            onPressed: () async {
+              if (formKey.currentState?.validate() == true) {
+                await EnterService().enterIn(
+                    reqNo: enter.reqNo, carLicenseNo: enter.carLicenseNo);
+                EasyLoading.showSuccess("차량번호를 저장했습니다.");
+              }
+            },
+            child: Text("저장", style: TextStyle()),
+          ),
+          SizedBox(width: 8),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Colors.red[800]),
+            onPressed: () async {
+              deleteDialog(enter);
+            },
+            child: Text("삭제", style: TextStyle()),
+          ),
+          Spacer(),
           FilledButton(
             onPressed: enter.maxrunTalkYn
                 ? null
@@ -99,6 +139,34 @@ class _EnterDetailState extends State<EnterDetail> {
     );
   }
 
+  deleteDialog(Enter enter) async {
+    final confirm = await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("입고기록을 삭제하시겠습니까?", style: TextStyle()),
+        actions: [
+          TextButton(
+            child: Text("취소", style: TextStyle()),
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+          ),
+          TextButton(
+            child: Text("삭제", style: TextStyle(color: Colors.red)),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      await EnterService().delete(enter.reqNo);
+      EasyLoading.showSuccess("입고기록을 삭제했습니다.");
+    }
+  }
+
   Widget photoList(Enter enter) {
     return SingleChildScrollView(
       child: StreamBuilder<List<Photo>>(
@@ -118,19 +186,38 @@ class _EnterDetailState extends State<EnterDetail> {
   }
 
   Widget photo(Photo photo) {
-    return Stack(
-      alignment: Alignment.topLeft,
-      children: [
-        Image(
-            width: 300,
-            fit: BoxFit.contain,
-            image: NetworkImage(photo.serverFile)),
-        Container(
-            width: 300,
-            color: Colors.white.withOpacity(0.5),
-            child: Text(photo.clientFileName,
-                textAlign: TextAlign.center, style: TextStyle())),
-      ],
+    return InkWell(
+      onTap: () {
+        photoDialog(photo.serverFile);
+      },
+      child: Stack(
+        alignment: Alignment.topLeft,
+        children: [
+          Image(
+              width: 300,
+              fit: BoxFit.fitWidth,
+              image: NetworkImage(photo.serverFile)),
+          Container(
+              width: 300,
+              color: Colors.white.withOpacity(0.5),
+              child: Text(photo.clientFileName,
+                  textAlign: TextAlign.center, style: TextStyle())),
+        ],
+      ),
+    );
+  }
+
+  photoDialog(String url) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        contentPadding: EdgeInsets.zero,
+        content: InkWell(
+          onTap: () {
+            Navigator.of(context).pop();
+          },
+            child: Image(image: NetworkImage(url))),
+      ),
     );
   }
 

@@ -109,8 +109,8 @@ class _PerformanceScreenState extends State<PerformanceScreen>
       initialValue: model.dateRange.value,
       format: DateFormat("yyyy-MM-dd"),
       name: '기간',
-      firstDate: DateTime.now().add(Duration(days: -364)).toUtc(),
-      lastDate: DateTime.now().toUtc(),
+      firstDate: DateTime.now().add(Duration(days: -364)),
+      lastDate: DateTime.now(),
       onChanged: (value) {
         if( value == model.dateRange.value) {
           return;

@@ -1,15 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:photoapp/model/car_care.dart';
+import 'package:flutter/material.dart';
 import 'package:photoapp/model/enter.dart';
 import 'package:photoapp/model/memo.dart';
 import 'package:photoapp/model/photo.dart';
-import 'package:photoapp/service/user_service.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'api_service.dart';
@@ -20,6 +16,12 @@ class EnterService {
   factory EnterService() {
     return _instance;
   }
+
+  int? repairShopNo;
+  String? carLicenseNo;
+  String? fromDate;
+  String? toDate;
+
 
   final list = BehaviorSubject<List<Enter>>.seeded([]);
 
@@ -34,12 +36,14 @@ class EnterService {
     // });
   }
 
-  Future<List<Enter>> fetch({int? repairShopNo, String? carLicenseNo}) async {
+  Future<List<Enter>> fetch() async {
     final res = await api.get<List<dynamic>>("/repairshop/enter/list",
         queryParameters: {
           "carLicenseNo": carLicenseNo,
-          "repairShopNo": repairShopNo
-        });
+          "repairShopNo": repairShopNo,
+          "fromDate": fromDate,
+          "toDate": toDate
+        }..removeWhere((key, value) => value==null));
     list.value = res.data!.map((e) => Enter.fromJson(e)).toList();
     return list.value;
   }
@@ -49,7 +53,7 @@ class EnterService {
         .get<List<dynamic>>("/repairshop/enter/photo/list",
         options: Options(
           headers: {
-            "no_loading": true,
+            "no_indicator": true,
           }
         ),
         queryParameters: {
@@ -62,6 +66,7 @@ class EnterService {
 
   Future<int> enterIn(
       {int? reqNo,
+        String? delYn,
       String? carLicenseNo,
       String? ownerName,
       String? ownerCpNo,
@@ -70,6 +75,7 @@ class EnterService {
     final res = await api
         .post<Map<String, dynamic>>("/repairshop/carcare/enterin", data: {
       "reqNo": reqNo,
+      "delYn": delYn,
       "carLicenseNo": carLicenseNo,
       "ownerName": ownerName,
       "ownerCpNo": ownerCpNo,
@@ -77,7 +83,19 @@ class EnterService {
       // "memo": memo,
     });
 
+    await fetch();
+
     return res.data!["reqNo"];
+  }
+
+  Future delete(int reqNo) async {
+    await api
+        .post<Map<String, dynamic>>("/repairshop/carcare/enterin", data: {
+      "reqNo": reqNo,
+      "delYn": "Y",
+    });
+
+    await fetch();
   }
 
   Future<bool> postChemicalRequestMessage(Enter enter) async {

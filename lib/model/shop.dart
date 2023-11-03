@@ -24,7 +24,7 @@ class Shop {
 
     int repairShopNo;
     // DateTime modiDate;
-    String maxrunChargerCpNo;
+    String? maxrunChargerCpNo;
     // int regUserId;
     // int modiUserId;
     // DateTime regDate;

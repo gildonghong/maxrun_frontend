@@ -23,6 +23,8 @@ class _DepartmentListFormState extends State<DepartmentListForm> {
         Expanded(child: nameField()),
         SizedBox(width: 8),
         saveButton(),
+        SizedBox(width: 8),
+        deleteButton(),
         // SizedBox(width: 8),
         // FilledButton(
         //   onPressed: () async {
@@ -55,12 +57,53 @@ class _DepartmentListFormState extends State<DepartmentListForm> {
       onPressed: departmentName == department.departmentName
           ? null
           : () async {
-              await DepartmentService().modify(department.departmentNo, departmentName);
+              await DepartmentService()
+                  .modify(department.departmentNo, departmentName);
               EasyLoading.showSuccess("부서명을 수정했습니다.");
             },
       child: Text("저장", style: TextStyle()),
       style: FilledButton.styleFrom(
           padding: EdgeInsets.zero, minimumSize: Size(56, 44)),
     );
+  }
+
+  Widget deleteButton() {
+    return FilledButton(
+      onPressed: () async {
+        await showDeleteDialog();
+      },
+      child: Text("삭제", style: TextStyle()),
+      style: FilledButton.styleFrom(
+          padding: EdgeInsets.zero, minimumSize: Size(56, 44)),
+    );
+  }
+
+  showDeleteDialog() async {
+    final confirm = await showDialog(
+        context: context,
+        builder: (context) {
+        return  AlertDialog(
+            title: Text("부서를 삭제하시겠습니까?", style: TextStyle()),
+            actions: [
+              TextButton(
+                child: Text("취소", style: TextStyle()),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+              ),
+              TextButton(
+                child: Text("삭제", style: TextStyle(color: Colors.red)),
+                onPressed: () async {
+                  Navigator.of(context).pop(true);
+                },
+              ),
+            ],
+          );
+        });
+
+    if(confirm) {
+      await DepartmentService().delete(department.departmentNo);
+      EasyLoading.showSuccess("부서를 삭제했습니다.");
+    }
   }
 }

@@ -41,7 +41,9 @@ class _ShopDepartmentSettingState extends State<ShopDepartmentSetting> {
       controller: scrollController,
       itemCount: departments.length,
       itemBuilder: (BuildContext context, int index) {
-        return DepartmentListForm(department: departments[index]);
+        return DepartmentListForm(
+          key: ObjectKey(departments[index]),
+            department: departments[index]);
       },
       separatorBuilder: (BuildContext context, int index) {
         return SizedBox(height: 8);

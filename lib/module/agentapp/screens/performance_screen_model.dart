@@ -20,8 +20,8 @@ class PerformanceScreenModel extends DataGridSource {
   final GlobalKey<SfDataGridState> gridKey = GlobalKey<SfDataGridState>();
 
   final dateRange = BehaviorSubject<DateTimeRange>.seeded(DateTimeRange(
-      start: DateTime.now().toUtc().add(Duration(days: -6)),
-      end: DateTime.now().toUtc()));
+      start: DateTime.now().add(Duration(days: -6)),
+      end: DateTime.now()));
 
   List<Performance> list = [];
 
@@ -33,8 +33,8 @@ class PerformanceScreenModel extends DataGridSource {
     account.value = null;
     carNo.text = "";
     dateRange.value = DateTimeRange(
-        start: DateTime.now().toUtc().add(Duration(days: -6)),
-        end: DateTime.now().toUtc());
+        start: DateTime.now().add(Duration(days: -6)),
+        end: DateTime.now());
     fetch();
   }
 
