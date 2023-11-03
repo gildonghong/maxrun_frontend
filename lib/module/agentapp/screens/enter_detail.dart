@@ -190,19 +190,24 @@ class _EnterDetailState extends State<EnterDetail> {
       onTap: () {
         photoDialog(photo.serverFile);
       },
-      child: Stack(
-        alignment: Alignment.topLeft,
-        children: [
-          Image(
-              width: 300,
-              fit: BoxFit.fitWidth,
-              image: NetworkImage(photo.serverFile)),
-          Container(
-              width: 300,
+      child: ConstrainedBox(
+        constraints: BoxConstraints (maxHeight: 450, maxWidth: 450),
+        child: Stack(
+          alignment: Alignment.topLeft,
+          children: [
+            Image(
+                fit: BoxFit.contain,
+                // width: 450,
+                // height: 450,
+                image: NetworkImage(photo.serverFile)),
+            Container(
+              width: 200,
               color: Colors.white.withOpacity(0.5),
               child: Text(photo.clientFileName,
-                  textAlign: TextAlign.center, style: TextStyle())),
-        ],
+                  textAlign: TextAlign.center, style: TextStyle(), softWrap: true,),
+            ),
+          ],
+        ),
       ),
     );
   }
