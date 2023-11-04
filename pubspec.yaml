@@ -65,6 +65,8 @@ dependencies:
   gap: ^3.0.1
   url_launcher: ^6.2.1
   cached_network_image: ^3.3.0
+  firebase_core: ^2.21.0
+  firebase_crashlytics: ^3.4.3
 
 dev_dependencies:
   flutter_test:
