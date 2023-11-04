@@ -35,17 +35,24 @@ class _ShopDepartmentSettingState extends State<ShopDepartmentSetting> {
   final ScrollController scrollController = ScrollController();
 
   Widget list() {
-    return ListView.separated(
-      controller: scrollController,
-      itemCount: departments.length,
-      itemBuilder: (BuildContext context, int index) {
-        return DepartmentListForm(
-          key: ObjectKey(departments[index]),
-            department: departments[index]);
-      },
-      separatorBuilder: (BuildContext context, int index) {
-        return SizedBox(height: 8);
-      },
+    return StreamBuilder<List<Department>>(
+      stream: DepartmentService().departments,
+      initialData: [],
+      builder: (context, snapshot) {
+        final departments = snapshot.data!;
+        return ListView.separated(
+          controller: scrollController,
+          itemCount: departments.length,
+          itemBuilder: (BuildContext context, int index) {
+            return DepartmentListForm(
+              key: ObjectKey(departments[index]),
+                department: departments[index]);
+          },
+          separatorBuilder: (BuildContext context, int index) {
+            return SizedBox(height: 8);
+          },
+        );
+      }
     );
   }
 

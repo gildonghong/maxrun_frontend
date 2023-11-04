@@ -64,7 +64,7 @@ class DepartmentService {
     //   listValue.add(d);
     // }
     // departments.value = listValue;
-    fetch();
+    await fetch();
   }
 
   Future delete(int departmentNo)async {
@@ -83,7 +83,7 @@ class DepartmentService {
     //   listValue.add(d);
     // }
     // departments.value = listValue;
-    fetch();
+    await fetch();
   }
 }
 
