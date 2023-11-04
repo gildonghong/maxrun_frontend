@@ -9,7 +9,6 @@ import 'package:photoapp/model/shop.dart';
 import 'package:photoapp/service/api_service.dart';
 import 'package:photoapp/service/shop_service.dart';
 import 'package:photoapp/ui/always_disabled_focus_node.dart';
-import 'package:provider/provider.dart';
 
 class ShopInfoScreen extends StatefulWidget {
   ShopInfoScreen({super.key});
@@ -35,9 +34,8 @@ class _ShopInfoScreenState extends State<ShopInfoScreen>
   @override
   void initState() {
     super.initState();
-    final shop = context.read<Shop?>();
-    photoSavePathController.text = shop?.photoSavePath??"";
-    maxrunChargerCpNoController.text = shop?.maxrunChargerCpNo??"";
+    photoSavePathController.text = userShop.photoSavePath??"";
+    maxrunChargerCpNoController.text = userShop.maxrunChargerCpNo??"";
   }
 
   @override

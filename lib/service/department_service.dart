@@ -14,21 +14,19 @@ class DepartmentService {
   }
 
   final departments = BehaviorSubject<List<Department>>.seeded([]);
+  final userDepartment = BehaviorSubject<Department?>.seeded(null);
 
   DepartmentService._() {
-    UserService().user.listen((value) {
-      if( !value.isSignedIn ) {
+    UserService().user.listen((user) async {
+      if( user==null ) {
         departments.value = [];
+        userDepartment.value = null;
       } else {
-        fetch();
+        await fetch();
+        userDepartment.value = departments.value.firstWhereOrNull((element) => element.departmentNo==user.departmentNo);
       }
     });
   }
-
-
-  late final userDepartment = Rx.combineLatest2(UserService().user, departments, (user, departments) {
-    return departments.firstWhereOrNull((element) => element.departmentNo==user.departmentNo);
-  }).asSubject();
 
   Future<void> fetch() async {
     final res = await api.get<List<dynamic>>(
@@ -88,3 +86,6 @@ class DepartmentService {
     fetch();
   }
 }
+
+List<Department> get departments => DepartmentService().departments.value;
+Department get userDepartment => DepartmentService().userDepartment.value!;

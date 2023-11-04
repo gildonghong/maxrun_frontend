@@ -1,7 +1,6 @@
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:photoapp/model/account.dart';
 import 'package:photoapp/model/department.dart';
-import 'package:provider/provider.dart';
 import 'package:rxdart/subjects.dart';
 
 import 'api_service.dart';

@@ -6,8 +6,8 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:photoapp/model/notice.dart';
 import 'package:photoapp/model/user.dart';
 import 'package:photoapp/module/agentapp/screens/notice_screen_model.dart';
+import 'package:photoapp/service/user_service.dart';
 import 'package:photoapp/ui/always_disabled_focus_node.dart';
-import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class NoticeScreen extends StatefulWidget {
@@ -39,7 +39,6 @@ class _NoticeScreenState extends State<NoticeScreen>
   }
 
   Widget list() {
-    final user = context.watch<User>();
     return SfDataGrid(
       rowHeight: 32,
       source: model,
@@ -49,13 +48,13 @@ class _NoticeScreenState extends State<NoticeScreen>
       onCellTap: (details) {
         if(details.column.columnName=='제목') {
           final notice = model.list[details.rowColumnIndex.rowIndex-1];
-          openDialog(notice,user);
+          openDialog(notice);
         }
       },
     );
   }
 
-  openDialog(Notice? notice, User user) {
+  openDialog(Notice? notice) {
     model.title = notice?.noticeTitle;
     model.content = notice?.notice ?? "";
     showDialog(
@@ -65,7 +64,7 @@ class _NoticeScreenState extends State<NoticeScreen>
             key: model.formKey,
             child: AlertDialog(
               title: Text(
-                  user.repairShopNo!=-1 ?"공지사항":
+                  currentUser.repairShopNo!=-1 ?"공지사항":
                   notice == null ? "공지사항 등록" : "공지사항 수정", style: TextStyle()),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -73,7 +72,7 @@ class _NoticeScreenState extends State<NoticeScreen>
                   SizedBox(
                     width: 400,
                     child: TextFormField(
-                      focusNode: user.repairShopNo==-1?null:AlwaysDisabledFocusNode(),
+                      focusNode: currentUser.repairShopNo==-1?null:AlwaysDisabledFocusNode(),
                       decoration: InputDecoration(labelText: "제목"),
                       validator: (value) {
                         if (value
@@ -92,7 +91,7 @@ class _NoticeScreenState extends State<NoticeScreen>
                   SizedBox(
                     width: 400,
                     child: TextFormField(
-                      focusNode: user.repairShopNo==-1?null:AlwaysDisabledFocusNode(),
+                      focusNode: currentUser.repairShopNo==-1?null:AlwaysDisabledFocusNode(),
                       decoration: InputDecoration(labelText: "내용"),
                       validator: (value) {
                         if (value
@@ -119,7 +118,7 @@ class _NoticeScreenState extends State<NoticeScreen>
                   },
                 ),
                 Visibility(
-                  visible: user.repairShopNo ==-1,
+                  visible: currentUser.repairShopNo ==-1,
                   child: TextButton(
                     child: Text("저장", style: TextStyle()),
                     onPressed: () async {
@@ -133,7 +132,7 @@ class _NoticeScreenState extends State<NoticeScreen>
                   ),
                 ),
                 Visibility(
-                  visible: user.repairShopNo ==-1 && notice != null,
+                  visible: currentUser.repairShopNo ==-1 && notice != null,
                   child: TextButton(
                     child: Text("삭제", style: TextStyle(color: Colors.red)),
                     onPressed: () async {
@@ -172,10 +171,9 @@ class _NoticeScreenState extends State<NoticeScreen>
 
 
   Widget addButton() {
-    final user = context.watch<User>();
     return FloatingActionButton(
       onPressed: () {
-        openDialog(null, user);
+        openDialog(null);
       },
       child: Icon(Icons.add),
     );

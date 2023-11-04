@@ -19,9 +19,9 @@ class UserService extends PreferenceAdapter<User> {
 
   // final worker = BehaviorSubject<Worker?>.seeded(null);
   late final user =
-      preferences.getCustomValue("worker", defaultValue: User.anonymous(), adapter: this);
+      preferences.getCustomValue("worker", defaultValue: null, adapter: this);
 
-  bool get isManager => user.getValue().managerYn == "Y";
+  bool get isManager => user.getValue()?.managerYn == "Y";
 
   login(String loginId, String pwd) async {
       final res = await api.post<Map<String, dynamic>>("/login", queryParameters: {
@@ -53,3 +53,5 @@ class UserService extends PreferenceAdapter<User> {
     return preferences.setString(key, jsonEncode(value));
   }
 }
+
+User get currentUser => UserService().user.getValue()!;

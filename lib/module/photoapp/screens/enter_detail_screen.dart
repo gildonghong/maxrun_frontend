@@ -11,9 +11,9 @@ import 'package:photoapp/model/user.dart';
 import 'package:photoapp/module/photoapp/photo_app.dart';
 import 'package:photoapp/module/photoapp/screens/enter_form_screen.dart';
 import 'package:photoapp/service/car_care_service.dart';
+import 'package:photoapp/service/department_service.dart';
 import 'package:photoapp/service/enter_service.dart';
-import 'package:provider/provider.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:photoapp/service/user_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EnterDetailScreen extends StatefulWidget {
@@ -29,20 +29,18 @@ class _EnterDetailScreenState extends State<EnterDetailScreen> {
   late CarCare car = widget.car;
   final photos = <Photo>[];
   final ImagePicker picker = ImagePicker();
-  late Department? department;
-  late final User user;
+  late Department department = userDepartment;
 
   @override
   void initState() {
     super.initState();
     fetchPhotos();
-
-    user = context.read<User>();
-    department = context.read<Department?>();
   }
 
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       appBar: AppBar(
         // leadingWidth: 64,
@@ -96,7 +94,7 @@ class _EnterDetailScreenState extends State<EnterDetailScreen> {
           ],
         ),
         actions: [
-          if (user.isManager)
+          if (currentUser.isManager)
             FilledButton.icon(
               style: FilledButton.styleFrom(
                 minimumSize: Size.zero,
@@ -138,12 +136,15 @@ class _EnterDetailScreenState extends State<EnterDetailScreen> {
   }
 
   fetchPhotos() async {
-    final fetched = await EnterService().getPhotos(car.reqNo);
-    setState(() {
-      photos
-        ..clear()
-        ..addAll(fetched);
-    });
+    try{
+      final fetched = await EnterService().getPhotos(car.reqNo);
+      setState(() {
+        photos
+          ..clear()
+          ..addAll(fetched);
+      });
+    }catch(e){}
+
   }
 
   Widget addImageSection() {
@@ -154,8 +155,8 @@ class _EnterDetailScreenState extends State<EnterDetailScreen> {
       padding: const EdgeInsets.only(bottom: 40, left: 16, right: 16, top: 16),
       child: Column(
         children: [
-          if (user.isManager) departmentField(),
-          if (user.isManager) Gap(12),
+          if (currentUser.isManager) departmentField(),
+          if (currentUser.isManager) Gap(12),
           Row(
             children: [
               Expanded(
@@ -260,7 +261,6 @@ class _EnterDetailScreenState extends State<EnterDetailScreen> {
   }
 
   Widget departmentField() {
-    final departments = context.read<List<Department>>();
     return DropdownButtonFormField<Department>(
       decoration: InputDecoration(labelText: "부서 사진 추가"),
       value: department,

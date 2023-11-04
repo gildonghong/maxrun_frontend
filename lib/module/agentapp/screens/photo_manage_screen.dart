@@ -7,7 +7,7 @@ import 'package:photoapp/module/agentapp/screens/enter_detail.dart';
 import 'package:photoapp/module/agentapp/screens/enter_list_model.dart';
 import 'package:photoapp/module/agentapp/screens/shop_list.dart';
 import 'package:photoapp/module/agentapp/screens/shop_list_model.dart';
-import 'package:provider/provider.dart';
+import 'package:photoapp/service/user_service.dart';
 
 import 'enter_list.dart';
 
@@ -48,14 +48,13 @@ class _PhotoManageScreenState extends State<PhotoManageScreen>
 
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<User>();
     return Padding(
       // padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
       padding: EdgeInsets.zero,
       child: Row(
         children: [
           Visibility(
-            visible: user.repairShopNo==-1,
+            visible: currentUser.repairShopNo==-1,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [

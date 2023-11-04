@@ -11,8 +11,8 @@ import 'package:photoapp/module/photoapp/screens/enter_form_screen.dart';
 import 'package:photoapp/module/photoapp/screens/photo_register_screen.dart';
 import 'package:photoapp/service/car_care_service.dart';
 import 'package:photoapp/service/department_service.dart';
+import 'package:photoapp/service/shop_service.dart';
 import 'package:photoapp/service/user_service.dart';
-import 'package:provider/provider.dart';
 import 'package:simple_grouped_listview/simple_grouped_listview.dart';
 import 'package:collection/collection.dart';
 
@@ -40,12 +40,11 @@ class _CarListScreenState extends State<CarListScreen>with AutomaticKeepAliveCli
 
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<User>();
     return SafeArea(
       bottom: false,
       child: Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: user.isManager ? registerButton() : null,
+        floatingActionButton: UserService().isManager ? registerButton() : null,
         body: Column(
           children: [
             Padding(
@@ -101,20 +100,17 @@ class _CarListScreenState extends State<CarListScreen>with AutomaticKeepAliveCli
   }
 
   showAccountPopup() {
-    final user = context.read<User>();
-    final department = context.read<Department?>();
-    final shop = context.read<Shop?>();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Center(
-            child: Text(shop?.repairShopName ?? "",
+            child: Text(ShopService().userShop.value?.repairShopName ?? "",
                 style: TextStyle(fontSize: 16))),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(height: 16),
-            Text("${department?.departmentName??""} ${user.workerName} 님",
+            Text("${DepartmentService().userDepartment.value?.departmentName??""} ${UserService().user.getValue()?.workerName} 님",
                 style: TextStyle(fontSize: 20)),
             SizedBox(height: 32),
             SizedBox(
@@ -219,7 +215,6 @@ class _CarListScreenState extends State<CarListScreen>with AutomaticKeepAliveCli
   }
 
   Widget listItem(CarCare item) {
-    final user = context.watch<User>();
     return InkWell(
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
@@ -236,7 +231,7 @@ class _CarListScreenState extends State<CarListScreen>with AutomaticKeepAliveCli
               fit: BoxFit.cover,
               fadeInDuration: Duration(milliseconds: 150),
               httpHeaders: {
-                "Authorization": "Bearer ${user.uAtoken}",
+                "Authorization": "Bearer ${currentUser.uAtoken}",
               },
             ),
             // Image.network(

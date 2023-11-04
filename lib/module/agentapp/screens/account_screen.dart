@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:photoapp/model/department.dart';
 import 'package:photoapp/module/agentapp/screens/account_screen_model.dart';
 import 'package:photoapp/service/account_service.dart';
-import 'package:provider/provider.dart';
+import 'package:photoapp/service/department_service.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class AccountScreen extends StatefulWidget {
@@ -34,8 +34,6 @@ class _AccountScreenState extends State<AccountScreen>
   }
 
   Widget floatingActionButton() {
-    final departments = context.watch<List<Department>>();
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [

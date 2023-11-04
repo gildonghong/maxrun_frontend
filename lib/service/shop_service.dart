@@ -21,11 +21,11 @@ class ShopService {
   final userShop = BehaviorSubject<Shop?>.seeded(null);
 
   ShopService._() {
-    UserService().user.listen((value) {
-      if (value.isAnonymous) {
+    UserService().user.listen((value) async {
+      if (value==null) {
         userShop.value = null;
       } else {
-        get(value.repairShopNo);
+        userShop.value = await get(value.repairShopNo);
       }
     });
   }
@@ -38,8 +38,7 @@ class ShopService {
 
   Future<Shop> get(int shopNo) async {
     final res = await api.get("/repairshop/$shopNo");
-    userShop.value = Shop.fromJson(res.data!);
-    return userShop.value!;
+    return Shop.fromJson(res.data!);
   }
 
   modify(String photoSavedPath, String maxrunChargerCpNo) async {
@@ -76,3 +75,5 @@ int? repairShopNo,
     await fetch();
   }
 }
+
+Shop get userShop => ShopService().userShop.value!;

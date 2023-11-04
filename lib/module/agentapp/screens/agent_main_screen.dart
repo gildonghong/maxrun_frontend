@@ -5,7 +5,6 @@ import 'package:photoapp/module/agentapp/screens/notice_screen.dart';
 import 'package:photoapp/module/agentapp/screens/photo_manage_screen.dart';
 import 'package:photoapp/module/agentapp/screens/shop_manage_screen.dart';
 import 'package:photoapp/service/user_service.dart';
-import 'package:provider/provider.dart';
 
 import 'setting_screen.dart';
 import 'performance_screen.dart';
@@ -77,7 +76,6 @@ class _AgentMainScreenState extends State<AgentMainScreen> {
   }
 
   Widget menuList(List<Menu> list) {
-    final user = context.watch<User>();
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12),
       color: Colors.blue[50],
@@ -86,7 +84,7 @@ class _AgentMainScreenState extends State<AgentMainScreen> {
         children: [
           SizedBox(height: 30),
           Text(
-            user.repairShopName,
+            currentUser.repairShopName,
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,
@@ -123,7 +121,7 @@ class _AgentMainScreenState extends State<AgentMainScreen> {
                   UserService().logout();
                 },
                 child: Text(
-                  "${user.workerName}\n로그아웃",
+                  "${currentUser.workerName}\n로그아웃",
                   style: TextStyle(),
                   textAlign: TextAlign.center,
                 )),

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:photoapp/model/department.dart';
 import 'package:photoapp/service/department_service.dart';
-import 'package:provider/provider.dart';
 
 import 'department_form.dart';
 
@@ -36,7 +35,6 @@ class _ShopDepartmentSettingState extends State<ShopDepartmentSetting> {
   final ScrollController scrollController = ScrollController();
 
   Widget list() {
-    final departments = context.watch<List<Department>>();
     return ListView.separated(
       controller: scrollController,
       itemCount: departments.length,

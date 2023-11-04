@@ -8,7 +8,6 @@ import 'package:photoapp/model/enter.dart';
 import 'package:photoapp/module/photoapp/photo_app.dart';
 import 'package:photoapp/service/enter_service.dart';
 import 'package:photoapp/service/user_service.dart';
-import 'package:provider/provider.dart';
 
 class EnterFormScreen extends StatefulWidget {
   EnterFormScreen({super.key, this.carCare});
