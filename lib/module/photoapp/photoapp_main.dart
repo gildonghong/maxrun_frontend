@@ -2,24 +2,19 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:photoapp/module/photoapp/photo_app.dart';
 import 'package:photoapp/preference.dart';
-import 'package:photoapp/service/department_service.dart';
-import 'package:photoapp/service/user_service.dart';
 
 Future<void> main() async {
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
 
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
-  final futures = [
+  await Future.wait([
     initPreferences(),
     Firebase.initializeApp(),
-  ];
-
-  await Future.wait(futures);
+  ]);
 
   FlutterError.onError = (errorDetails) {
     FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
