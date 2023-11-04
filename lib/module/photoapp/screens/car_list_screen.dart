@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photoapp/model/car_care.dart';
@@ -22,19 +23,13 @@ class CarListScreen extends StatefulWidget {
   State<CarListScreen> createState() => _CarListScreenState();
 }
 
-class _CarListScreenState extends State<CarListScreen> {
+class _CarListScreenState extends State<CarListScreen>with AutomaticKeepAliveClientMixin {
   final searchController = TextEditingController();
-  Department? department;
 
   @override
   void initState() {
     super.initState();
     CarCareService().fetch();
-
-    final departments = context.read<List<Department>>();
-
-    department = departments
-        .firstWhereOrNull((element) => element.departmentName == '신규등록');
   }
 
   @override
@@ -50,7 +45,7 @@ class _CarListScreenState extends State<CarListScreen> {
       bottom: false,
       child: Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: user.managerYn == "Y" ? registerButton() : null,
+        floatingActionButton: user.isManager ? registerButton() : null,
         body: Column(
           children: [
             Padding(
@@ -236,13 +231,21 @@ class _CarListScreenState extends State<CarListScreen> {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            Image.network(
-              item.fileSavedPath ?? "",
+            CachedNetworkImage(
+              imageUrl: item.fileSavedPath ?? "",
               fit: BoxFit.cover,
-              headers: {
+              fadeInDuration: Duration(milliseconds: 150),
+              httpHeaders: {
                 "Authorization": "Bearer ${user.uAtoken}",
               },
             ),
+            // Image.network(
+            //   item.fileSavedPath ?? "",
+            //   fit: BoxFit.cover,
+            //   headers: {
+            //     "Authorization": "Bearer ${user.uAtoken}",
+            //   },
+            // ),
             Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -277,30 +280,7 @@ class _CarListScreenState extends State<CarListScreen> {
     );
   }
 
-  Widget departmentField() {
-    final departments = context.watch<List<Department>>();
-
-    return DropdownButtonFormField<Department?>(
-      decoration: InputDecoration(labelText: "부서"),
-      value: department,
-      validator: (value) {
-        if (department == null) {
-          return "부서를 선택하세요";
-        }
-      },
-      items: [
-        DropdownMenuItem(
-          value: null,
-          child: Text("부서 선택", style: TextStyle()),
-        ),
-        ...departments.map((e) => DropdownMenuItem(
-              value: e,
-              child: Text(e.departmentName, style: TextStyle()),
-            ))
-      ],
-      onChanged: (Department? value) {
-        department = value;
-      },
-    );
-  }
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

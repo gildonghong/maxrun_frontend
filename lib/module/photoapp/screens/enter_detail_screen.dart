@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/rendering/sliver_grid.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -44,6 +45,8 @@ class _EnterDetailScreenState extends State<EnterDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        // leadingWidth: 64,
+        titleSpacing: 0,
         bottom: car.ownerName?.isNotEmpty == true ||
                 car.ownerCpNo?.isNotEmpty == true
             ? PreferredSize(
@@ -55,10 +58,9 @@ class _EnterDetailScreenState extends State<EnterDetailScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      if (car.ownerName?.isNotEmpty == true)
-                        Text(car.ownerName!, style: TextStyle(fontSize: 16)),
-                      if (car.ownerCpNo?.isNotEmpty == true)
-                        Text(car.ownerCpNo!, style: TextStyle(fontSize: 16)),
+                        Text(car.ownerName ?? "", style: TextStyle(fontSize: 16)),
+                        Gap(4),
+                        Text(car.ownerCpNo ?? "", style: TextStyle(fontSize: 16)),
                       if (car.ownerCpNo?.isNotEmpty == true)
                         IconButton(
                           icon: Icon(
@@ -79,7 +81,7 @@ class _EnterDetailScreenState extends State<EnterDetailScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+              padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
               decoration: BoxDecoration(
                   color: Colors.green, borderRadius: BorderRadius.circular(8)),
               child: Text(car.paymentType,
@@ -90,7 +92,7 @@ class _EnterDetailScreenState extends State<EnterDetailScreen> {
             ),
             Gap(4),
             Text(car.carLicenseNo ?? "",
-                style: TextStyle(color: Colors.black87)),
+                style: TextStyle(color: Colors.black87, fontSize: 20)),
           ],
         ),
         actions: [
@@ -230,18 +232,20 @@ class _EnterDetailScreenState extends State<EnterDetailScreen> {
             },
             child: Padding(
               padding: const EdgeInsets.all(24.0),
-              child: Image(image: NetworkImage(p.serverFile)),
+              child: CachedNetworkImage(
+                imageUrl: p.serverFile,
+                fadeInDuration: Duration(milliseconds: 150),
+                errorWidget: (context, url, error) => Icon(Icons.image_not_supported_rounded),
+              ),
             ),
           ),
         );
       },
-      child: Stack(
-        fit: StackFit.loose,
-          children: [
-            Container(
-              alignment: Alignment.center,
-                color: Colors.black,
-                child: Image(image: NetworkImage(p.serverFile))),
+      child: Stack(fit: StackFit.loose, children: [
+        Container(
+            alignment: Alignment.center,
+            color: Colors.black,
+            child: Image(image: NetworkImage(p.serverFile))),
         Container(
           color: Colors.black54,
           padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),

@@ -23,7 +23,6 @@ class EnterService {
   String? fromDate;
   String? toDate;
 
-
   final list = BehaviorSubject<List<Enter>>.seeded([]);
 
   EnterService._() {
@@ -44,22 +43,18 @@ class EnterService {
           "repairShopNo": repairShopNo,
           "fromDate": fromDate,
           "toDate": toDate
-        }..removeWhere((key, value) => value==null));
+        }..removeWhere((key, value) => value == null));
     list.value = res.data!.map((e) => Enter.fromJson(e)).toList();
     return list.value;
   }
 
-  Future<List<Photo>> getPhotos(int reqNo) async {
-    final res = await api
-        .get<List<dynamic>>("/repairshop/enter/photo/list",
-        options: Options(
-          headers: {
-            "no_indicator": true,
-          }
-        ),
-        queryParameters: {
-      "reqNo": reqNo,
-    });
+  Future<List<Photo>> getPhotos(int reqNo, {int? repairShopNo}) async {
+    final res = await api.get<List<dynamic>>("/repairshop/enter/photo/list",
+        options: Options(headers: {
+          "no_indicator": true,
+        }),
+        queryParameters: {"reqNo": reqNo, "repairShopNo": repairShopNo}
+          ..removeWhere((key, value) => value == null));
     final list = res.data!.map((e) => Photo.fromJson(e)).toList();
 
     return list;
@@ -80,7 +75,7 @@ class EnterService {
       "ownerCpNo": ownerCpNo,
       "paymentType": paymentType,
       // "memo": memo,
-    });
+    }..removeWhere((key, value) => value==null));
 
     return CarCare.fromJson(res.data!);
 
@@ -96,14 +91,10 @@ class EnterService {
     "reqNo": 66
 }
     */
-
-
-
   }
 
   Future delete(int reqNo) async {
-    await api
-        .post<Map<String, dynamic>>("/repairshop/carcare/enterin", data: {
+    await api.post<Map<String, dynamic>>("/repairshop/carcare/enterin", data: {
       "reqNo": reqNo,
       "delYn": "Y",
     });
@@ -122,7 +113,7 @@ class EnterService {
 
     final success = res.data?["result"] == "success";
 
-    if( success) {
+    if (success) {
       enter.maxrunTalkYn = true;
       list.add(list.value);
     }
@@ -139,19 +130,17 @@ class EnterService {
           "reqNo": enter.reqNo,
           "ownerCpNo": enter.ownerCpNo,
           "ownerName": enter.ownerName,
-        });
+        }..removeWhere((key, value) => value==null));
 
     final success = res.data?["result"] == "success";
 
-    if( success) {
+    if (success) {
       enter.customerTalkYn = true;
       list.add(list.value);
     }
 
-
     return success;
   }
-
 
   Future addMemo(Enter enter, String text) async {
     final res =

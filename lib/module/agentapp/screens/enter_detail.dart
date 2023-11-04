@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:photoapp/extension/datetime_ext.dart';
@@ -19,12 +21,34 @@ class EnterDetail extends StatefulWidget {
 }
 
 class _EnterDetailState extends State<EnterDetail> {
+  late StreamSubscription<Enter?> sub;
+
   Stream<Enter?> get enter => widget.enter;
+  final formKey = GlobalKey<FormState>();
+  final carLicenseNo = TextEditingController();
   late final photos = enter.asyncMap((event) async {
     return event == null
         ? <Photo>[]
-        : await EnterService().getPhotos(event.reqNo);
+        : await EnterService().getPhotos(event.reqNo, repairShopNo: event.repairShopNo);
   });
+
+  @override
+  void dispose() {
+    super.dispose();
+    memoTextController.dispose();
+    carLicenseNo.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    sub = enter.listen((event) {
+      carLicenseNo.text = event?.carLicenseNo??"";
+    });
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +76,6 @@ class _EnterDetailState extends State<EnterDetail> {
         });
   }
 
-  final formKey = GlobalKey<FormState>();
 
   Widget bar(Enter enter) {
     return Container(
@@ -69,7 +92,7 @@ class _EnterDetailState extends State<EnterDetail> {
               child: Form(
                 key: formKey,
                 child: TextFormField(
-                  initialValue: enter.carLicenseNo,
+                  controller: carLicenseNo,
                   onChanged: (value) {
                     enter.carLicenseNo = value;
                   },
@@ -168,19 +191,22 @@ class _EnterDetailState extends State<EnterDetail> {
   }
 
   Widget photoList(Enter enter) {
-    return SingleChildScrollView(
-      child: StreamBuilder<List<Photo>>(
-        stream: photos,
-        initialData: [],
-        builder: (context, snapshot) {
-          final photos = snapshot.data ?? [];
-          return Wrap(
-              alignment: WrapAlignment.start,
-              clipBehavior: Clip.hardEdge,
-              spacing: 8,
-              runSpacing: 8,
-              children: photos.map((e) => photo(e)).toList());
-        },
+    return Container(
+      width: double.infinity,
+      child: SingleChildScrollView(
+        child: StreamBuilder<List<Photo>>(
+          stream: photos,
+          initialData: [],
+          builder: (context, snapshot) {
+            final photos = snapshot.data ?? [];
+            return Wrap(
+                alignment: WrapAlignment.start,
+                clipBehavior: Clip.hardEdge,
+                spacing: 8,
+                runSpacing: 8,
+                children: photos.map((e) => photo(e)).toList());
+          },
+        ),
       ),
     );
   }
@@ -190,21 +216,25 @@ class _EnterDetailState extends State<EnterDetail> {
       onTap: () {
         photoDialog(photo.serverFile);
       },
-      child: ConstrainedBox(
-        constraints: BoxConstraints (maxHeight: 450, maxWidth: 450),
+      child: Container(
+        color: Colors.black,
+        width: 300,
+        height: 300,
         child: Stack(
           alignment: Alignment.topLeft,
           children: [
-            Image(
-                fit: BoxFit.contain,
-                // width: 450,
-                // height: 450,
-                image: NetworkImage(photo.serverFile)),
+            Center(
+              child: CachedNetworkImage(
+                imageUrl: photo.serverFile,
+                  fit: BoxFit.contain,
+                placeholder: (context, url) => CircularProgressIndicator(),
+                errorWidget: (context, url, error) => Icon(Icons.image_not_supported_rounded),),
+            ),
             Container(
-              width: 200,
-              color: Colors.white.withOpacity(0.5),
+              width: 300,
+              color: Colors.black.withOpacity(0.5),
               child: Text(photo.clientFileName,
-                  textAlign: TextAlign.center, style: TextStyle(), softWrap: true,),
+                  textAlign: TextAlign.center, style: TextStyle(color: Colors.white), softWrap: true,),
             ),
           ],
         ),
@@ -221,7 +251,11 @@ class _EnterDetailState extends State<EnterDetail> {
           onTap: () {
             Navigator.of(context).pop();
           },
-            child: Image(image: NetworkImage(url))),
+            child: CachedNetworkImage(
+              imageUrl: url,
+              placeholder: (context, url) => CircularProgressIndicator(),
+              errorWidget: (context, url, error) => Icon(Icons.image_not_supported_rounded),
+            )),
       ),
     );
   }
@@ -376,11 +410,7 @@ class _EnterDetailState extends State<EnterDetail> {
 
   final memoTextController = TextEditingController();
 
-  @override
-  void dispose() {
-    super.dispose();
-    memoTextController.dispose();
-  }
+
 
   Widget maker() {
     return DropdownButtonFormField(

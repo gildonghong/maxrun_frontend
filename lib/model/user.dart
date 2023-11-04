@@ -53,18 +53,18 @@ class User {
 
   // String mobileYn;
 
-  bool get isAnonymous => workerNo==-1;
-  bool get isSignedIn => workerNo!=-1;
+  bool get isAnonymous => workerNo==-2;
+  bool get isSignedIn => workerNo!=-2;
   bool get isManager => managerYn=="Y";
 
   factory User.anonymous() => User(
       departmentName: "",
       managerYn: "N",
-      workerNo: -1,
+      workerNo: -2,
       loginDate: 0,
-      repairShopNo: -1,
+      repairShopNo: -2,
       uAtoken: "",
-      departmentNo: -1,
+      departmentNo: -2,
       workerName: "",
       repairShopName: "");
 

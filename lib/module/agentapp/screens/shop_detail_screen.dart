@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:photoapp/model/shop.dart';
 import 'package:photoapp/service/shop_service.dart';
@@ -82,6 +83,8 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                 SizedBox(height: 12),
                 TextFormField(
                   decoration: InputDecoration(labelText: "사업자등록번호"),
+                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9\-]'))],
+                  keyboardType: TextInputType.number,
                   controller: businessNo,
                   validator: (value) {
                     if (value?.trim().isNotEmpty != true) {
@@ -92,6 +95,8 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                 SizedBox(height: 12),
                 TextFormField(
                   decoration: InputDecoration(labelText: "대표번호"),
+                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9\-]'))],
+                  keyboardType: TextInputType.number,
                   controller: tel,
                   validator: (value) {
                     if (value?.trim().isNotEmpty != true) {
