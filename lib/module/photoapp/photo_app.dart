@@ -100,7 +100,7 @@ class PhotoApp extends StatelessWidget {
         home: Builder(
           builder: (context) {
             final user = context.watch<User>();
-            return user.workerNo == -1 ? AppLoginScreen() : CarListScreen();
+            return user.isAnonymous ? AppLoginScreen() : CarListScreen();
           },
         ),
         builder: EasyLoading.init(),
