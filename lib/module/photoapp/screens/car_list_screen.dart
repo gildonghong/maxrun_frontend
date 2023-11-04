@@ -5,27 +5,36 @@ import 'package:photoapp/model/department.dart';
 import 'package:photoapp/model/shop.dart';
 import 'package:photoapp/model/user.dart';
 import 'package:photoapp/module/photoapp/photo_app.dart';
+import 'package:photoapp/module/photoapp/screens/enter_detail_screen.dart';
+import 'package:photoapp/module/photoapp/screens/enter_form_screen.dart';
 import 'package:photoapp/module/photoapp/screens/photo_register_screen.dart';
 import 'package:photoapp/service/car_care_service.dart';
 import 'package:photoapp/service/department_service.dart';
 import 'package:photoapp/service/user_service.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_grouped_listview/simple_grouped_listview.dart';
+import 'package:collection/collection.dart';
 
-class CarCaresScreen extends StatefulWidget {
-  const CarCaresScreen({super.key});
+class CarListScreen extends StatefulWidget {
+  const CarListScreen({super.key});
 
   @override
-  State<CarCaresScreen> createState() => _CarCaresScreenState();
+  State<CarListScreen> createState() => _CarListScreenState();
 }
 
-class _CarCaresScreenState extends State<CarCaresScreen> {
+class _CarListScreenState extends State<CarListScreen> {
   final searchController = TextEditingController();
+  Department? department;
 
   @override
   void initState() {
     super.initState();
     CarCareService().fetch();
+
+    final departments = context.read<List<Department>>();
+
+    department = departments
+        .firstWhereOrNull((element) => element.departmentName == '신규등록');
   }
 
   @override
@@ -36,11 +45,12 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = context.watch<User>();
     return SafeArea(
       bottom: false,
       child: Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: registerButton(),
+        floatingActionButton: user.managerYn == "Y" ? registerButton() : null,
         body: Column(
           children: [
             Padding(
@@ -50,7 +60,11 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
                   IconButton(
                     style: IconButton.styleFrom(padding: EdgeInsets.zero),
                     onPressed: showAccountPopup,
-                    icon: Icon(Icons.account_circle_rounded, size: 36,color: colorPrimary,),
+                    icon: Icon(
+                      Icons.account_circle_rounded,
+                      size: 36,
+                      color: colorPrimary,
+                    ),
                   ),
                   Expanded(
                     child: TextFormField(
@@ -63,15 +77,24 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
                       },
                       decoration: InputDecoration(
                         hintText: "차량 번호 검색",
-                        suffixIcon: IconButton(icon: Icon(Icons.search,size: 24,),onPressed: () {
-                          CarCareService().fetch(searchController.text);
-                          FocusScope.of(context).unfocus();
-                        },),
+                        suffixIcon: Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: FilledButton(
+                            style: FilledButton.styleFrom(minimumSize: Size.zero, padding: EdgeInsets.zero),
+                            child: Icon(
+                              Icons.search,
+                              size: 24,
+                            ),
+                            onPressed: () {
+                              CarCareService().fetch(searchController.text);
+                              FocusScope.of(context).unfocus();
+                            },
+                          ),
+                        ),
                       ),
                     ),
                   ),
                   // SizedBox(width: 8),
-
                 ],
               ),
             ),
@@ -84,17 +107,20 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
 
   showAccountPopup() {
     final user = context.read<User>();
-    final department = context.read<Department>();
-    final shop = context.read<Shop>();
+    final department = context.read<Department?>();
+    final shop = context.read<Shop?>();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Center(child: Text(shop.repairShopName ?? "", style: TextStyle(fontSize: 16))),
+        title: Center(
+            child: Text(shop?.repairShopName ?? "",
+                style: TextStyle(fontSize: 16))),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(height: 16),
-            Text("${department.departmentName} ${user.workerName} 님", style: TextStyle(fontSize: 20)),
+            Text("${department?.departmentName??""} ${user.workerName} 님",
+                style: TextStyle(fontSize: 20)),
             SizedBox(height: 32),
             SizedBox(
               width: double.infinity,
@@ -115,18 +141,20 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
   Widget registerButton() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
-      child: FloatingActionButton.large(
-        // backgroundColor: Colors.red[800]!.withOpacity(0.9),
-
-        shape: CircleBorder(),
-        // foregroundColor: Colors.white,
-        // backgroundColor: Colors.red,
+      child: FloatingActionButton.extended(
         onPressed: () {
-          showPickerOptionDialog();
+          // showPickerOptionDialog();
+          openRegisterDialog();
         },
-        child: Icon(
-          Icons.edit_note_rounded,
-          size: 64,
+        label: Row(
+          children: [
+            Icon(
+              Icons.edit_note_rounded,
+              size: 48,
+            ),
+            SizedBox(height: 8),
+            Text("등록", style: TextStyle(fontSize: 24)),
+          ],
         ),
       ),
     );
@@ -135,77 +163,25 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
   final pickerOptionFormKey = GlobalKey<FormState>();
   var images = <XFile>[];
 
-  pushRegisterScreen([CarCare? item]) async {
-    if (images.isEmpty) {
-      return;
-    }
 
-    await Navigator.of(context).pushReplacement(MaterialPageRoute(
+  openRegisterDialog() async {
+    final nav = Navigator.of(context);
+
+    final result = await nav.push(MaterialPageRoute(
+      fullscreenDialog: true,
       builder: (context) {
-        return PhotoRegisterScreen(
-            department: department!, files: images, carCare: item);
+        return EnterFormScreen();
       },
     ));
+
+    if (result is CarCare) {
+      nav.push(MaterialPageRoute(
+        builder: (context) => EnterDetailScreen(result),
+      ));
+    }
   }
 
-  showPickerOptionDialog([CarCare? item]) {
-    showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              title: Center(
-                child: Text(item == null ? "신규 입고 등록" : "부서 사진 추가",
-                    style: TextStyle()),
-              ),
-              content: Form(
-                key: pickerOptionFormKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(height:8),
-                    departmentField(item == null),
-                    SizedBox(height:16),
-                    Row(children: [
-                      Expanded(
-                        child: FilledButton.icon(
-                          onPressed: () async {
-                            if (pickerOptionFormKey.currentState?.validate() != true) {
-                              return;
-                            }
 
-                            images = await picker.pickMultiImage();
-                            pushRegisterScreen(item);
-                          },
-                          icon: Icon(Icons.photo_library),
-                          label: Text("앨범", style: TextStyle()),
-                        ),
-                      ),
-                      SizedBox(width:8),
-                      Expanded(
-                        child: FilledButton.icon(
-                          onPressed: () async {
-                            if (pickerOptionFormKey.currentState?.validate() != true) {
-                              return;
-                            }
-                            final XFile? photo =
-                            await picker.pickImage(source: ImageSource.camera);
-                            if (photo != null) {
-                              images = [photo];
-                              pushRegisterScreen(item);
-                            }
-                          },
-                          icon: Icon(Icons.camera),
-                          label: Text("카메라", style: TextStyle()),
-                        ),
-                      ),
-                    ],)
-                  ],
-                ),
-              ),
-              actionsAlignment: MainAxisAlignment.center,
-            ));
-  }
-
-  final ImagePicker picker = ImagePicker();
 
   Widget list() {
     return RefreshIndicator(
@@ -251,7 +227,9 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
     final user = context.watch<User>();
     return InkWell(
       onTap: () {
-        showPickerOptionDialog(item);
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => EnterDetailScreen(item,),
+        ));
       },
       child: Card(
         clipBehavior: Clip.antiAlias,
@@ -259,7 +237,7 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
           fit: StackFit.expand,
           children: [
             Image.network(
-              item.fileSavedPath,
+              item.fileSavedPath ?? "",
               fit: BoxFit.cover,
               headers: {
                 "Authorization": "Bearer ${user.uAtoken}",
@@ -299,29 +277,8 @@ class _CarCaresScreenState extends State<CarCaresScreen> {
     );
   }
 
-  Department? department;
-
-  Widget departmentField(bool isNew) {
+  Widget departmentField() {
     final departments = context.watch<List<Department>>();
-
-    if (isNew) {
-      department =
-          departments.firstWhere((element) => element.departmentName == '신규등록');
-
-      return DropdownButtonFormField<Department?>(
-        decoration: InputDecoration(labelText: "부서"),
-        value: department,
-        items: [
-          DropdownMenuItem(
-            value: department,
-            child: Text(department!.departmentName, style: TextStyle()),
-          )
-        ],
-        onChanged: (Department? value) {},
-      );
-    }
-
-    department = context.read<Department?>();
 
     return DropdownButtonFormField<Department?>(
       decoration: InputDecoration(labelText: "부서"),

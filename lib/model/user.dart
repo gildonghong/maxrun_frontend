@@ -3,93 +3,114 @@
 import 'dart:convert';
 
 class User {
-    User({
-        required this.departmentName,
-        required this.managerYn,
-        required this.uRtoken,
-        required this.workerNo,
-        // required this.os,
-        required this.iss,
-        required this.ipAddress,
-        required this.loginDate,
-        required this.userAgent,
-        required this.repairShopNo,
-        // required this.osVersion,
-        required this.uAtoken,
-        required this.departmentNo,
-        required this.workerName,
-        // required this.position,
-        required this.exp,
-        required this.iat,
-        required this.jti,
-        required this.repairShopName,
-        required this.mobileYn,
-    });
+  User({
+    required this.departmentName,
+    required this.managerYn,
+    // required this.uRtoken,
+    required this.workerNo,
+    // required this.os,
+    // required this.iss,
+    // required this.ipAddress,
+    required this.loginDate,
+    // required this.userAgent,
+    required this.repairShopNo,
+    // required this.osVersion,
+    required this.uAtoken,
+    required this.departmentNo,
+    required this.workerName,
+    // required this.position,
+    // required this.exp,
+    // required this.iat,
+    // required this.jti,
+    required this.repairShopName,
+    // required this.mobileYn,
+  });
 
-    String departmentName;
-    String managerYn;
-    String uRtoken;
-    int workerNo;
-    // String os;
-    String iss;
-    String ipAddress;
-    int loginDate;
-    String userAgent;
-    int repairShopNo;
-    // String osVersion;
-    String uAtoken;
-    int departmentNo;
-    String workerName;
-    // String position;
-    int exp;
-    int iat;
-    String jti;
-    String repairShopName;
-    String mobileYn;
+  String departmentName;
+  String managerYn;
 
-    factory User.fromJson(Map<dynamic, dynamic> json) => User(
+  // String uRtoken;
+  int workerNo;
+
+  // String os;
+  // String iss;
+  // String ipAddress;
+  int loginDate;
+
+  // String userAgent;
+  int repairShopNo;
+
+  // String osVersion;
+  String uAtoken;
+  int departmentNo;
+  String workerName;
+
+  // String position;
+  // int exp;
+  // int iat;
+  // String jti;
+  String repairShopName;
+
+  // String mobileYn;
+
+  bool get isAnonymous => workerNo==-1;
+  bool get isSignedIn => workerNo!=-1;
+  bool get isManager => managerYn=="Y";
+
+  factory User.anonymous() => User(
+      departmentName: "",
+      managerYn: "N",
+      workerNo: -1,
+      loginDate: 0,
+      repairShopNo: -1,
+      uAtoken: "",
+      departmentNo: -1,
+      workerName: "",
+      repairShopName: "");
+
+  factory User.fromJson(Map<dynamic, dynamic> json) => User(
         departmentName: json["departmentName"],
         managerYn: json["managerYn"],
-        uRtoken: json["uRtoken"],
+        // uRtoken: json["uRtoken"],
         workerNo: json["workerNo"],
         // os: json["os"],
-        iss: json["iss"],
-        ipAddress: json["ipAddress"],
+        // iss: json["iss"],
+        // ipAddress: json["ipAddress"],
         loginDate: json["loginDate"],
-        userAgent: json["userAgent"],
+        // userAgent: json["userAgent"],
         repairShopNo: json["repairShopNo"],
         // osVersion: json["osVersion"],
         uAtoken: json["uAtoken"],
         departmentNo: json["departmentNo"],
         workerName: json["workerName"],
         // position: json["position"],
-        exp: json["exp"],
-        iat: json["iat"],
-        jti: json["jti"],
+        // exp: json["exp"],
+        // iat: json["iat"],
+        // jti: json["jti"],
         repairShopName: json["repairShopName"],
-        mobileYn: json["mobileYn"],
-    );
+        // mobileYn: json["mobileYn"],
+      );
 
-    Map<dynamic, dynamic> toJson() => {
+  Map<dynamic, dynamic> toJson() => {
         "departmentName": departmentName,
         "managerYn": managerYn,
-        "uRtoken": uRtoken,
+        // "uRtoken": uRtoken,
         "workerNo": workerNo,
         // "os": os,
-        "iss": iss,
-        "ipAddress": ipAddress,
+        // "iss": iss,
+        // "ipAddress": ipAddress,
         "loginDate": loginDate,
-        "userAgent": userAgent,
+        // "userAgent": userAgent,
         "repairShopNo": repairShopNo,
         // "osVersion": osVersion,
         "uAtoken": uAtoken,
         "departmentNo": departmentNo,
         "workerName": workerName,
         // "position": position,
-        "exp": exp,
-        "iat": iat,
-        "jti": jti,
+        // "exp": exp,
+        // "iat": iat,
+        // "jti": jti,
         "repairShopName": repairShopName,
-        "mobileYn": mobileYn,
-    };
+        // "mobileYn": mobileYn,
+      };
 }

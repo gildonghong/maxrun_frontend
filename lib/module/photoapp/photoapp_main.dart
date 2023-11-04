@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:photoapp/module/photoapp/photo_app.dart';
 import 'package:photoapp/preference.dart';
@@ -7,6 +8,11 @@ import 'package:photoapp/service/user_service.dart';
 
 Future<void> main() async {
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+
+  // SystemChrome.setSystemUIOverlayStyle( SystemUiOverlayStyle(
+  //   statusBarColor: colorPrimary,
+  // ));
+
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   final futures = [

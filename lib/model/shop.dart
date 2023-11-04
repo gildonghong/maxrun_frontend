@@ -50,6 +50,21 @@ class Shop {
         // repairShopEmail: json["repairShopEmail"],
     );
 
+    factory Shop.none() => Shop(
+        repairShopNo: -1,
+        // modiDate: DateTime.fromMillisecondsSinceEpoch(json["modiDate"]),
+        maxrunChargerCpNo: "",
+        // regUserId: json["regUserId"],
+        // modiUserId: json["modiUserId"],
+        // regDate: DateTime.fromMillisecondsSinceEpoch(json["regDate"]),
+        photoSavePath: "",
+        repairShopName: "",
+        businessNo: "",
+        ceoName: "",
+        repairShopTelNo: "",
+        // repairShopEmail: json["repairShopEmail"],
+    );
+
     Map<dynamic, dynamic> toJson() => {
         "repairShopNo": repairShopNo,
         // "modiDate": modiDate.millisecondsSinceEpoch,

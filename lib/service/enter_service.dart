@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:photoapp/model/car_care.dart';
 import 'package:photoapp/model/enter.dart';
 import 'package:photoapp/model/memo.dart';
 import 'package:photoapp/model/photo.dart';
@@ -64,9 +65,8 @@ class EnterService {
     return list;
   }
 
-  Future<int> enterIn(
+  Future<CarCare> enterIn(
       {int? reqNo,
-        String? delYn,
       String? carLicenseNo,
       String? ownerName,
       String? ownerCpNo,
@@ -75,7 +75,6 @@ class EnterService {
     final res = await api
         .post<Map<String, dynamic>>("/repairshop/carcare/enterin", data: {
       "reqNo": reqNo,
-      "delYn": delYn,
       "carLicenseNo": carLicenseNo,
       "ownerName": ownerName,
       "ownerCpNo": ownerCpNo,
@@ -83,9 +82,23 @@ class EnterService {
       // "memo": memo,
     });
 
-    await fetch();
+    return CarCare.fromJson(res.data!);
 
-    return res.data!["reqNo"];
+    /*
+    {
+    "ownerName": "홍박사",
+    "ownerCpNo": "01034543434",
+    "paymentType": "보증",
+    "carLicenseNo": "55고511221",
+    "workerNo": 1,
+    "repairShopNo": 1,
+    "outReqNo": 66,
+    "reqNo": 66
+}
+    */
+
+
+
   }
 
   Future delete(int reqNo) async {

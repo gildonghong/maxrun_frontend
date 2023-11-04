@@ -21,6 +21,13 @@ class Department{
     };
   }
 
+  factory Department.none() {
+    return Department(
+      departmentName: "",
+      repairShopNo: -1,
+      departmentNo: -1,
+    );
+  }
   factory Department.fromJson(Map<String, dynamic> map) {
     return Department(
       departmentName: map['departmentName'] as String,

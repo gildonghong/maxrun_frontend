@@ -1,28 +1,19 @@
+/*
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photoapp/model/car_care.dart';
 import 'package:photoapp/model/department.dart';
-import 'package:photoapp/model/enter.dart';
-import 'package:photoapp/service/car_care_service.dart';
-import 'package:photoapp/service/department_service.dart';
-import 'package:photoapp/service/enter_service.dart';
 import 'package:photoapp/service/user_service.dart';
 import 'package:photoapp/ui/always_disabled_focus_node.dart';
-import 'package:provider/provider.dart';
 
 class PhotoRegisterScreen extends StatefulWidget {
-  List<XFile> files;
-
-  Department department;
-
   CarCare? carCare;
 
   PhotoRegisterScreen(
-      {required this.files, super.key, required this.department, this.carCare});
+      {this.carCare});
 
   @override
   State<PhotoRegisterScreen> createState() => _PhotoRegisterScreenState();
@@ -67,7 +58,6 @@ class _PhotoRegisterScreenState extends State<PhotoRegisterScreen> {
                   child: repairType(),
                 ),
               ),
-              saveButton(),
               // SizedBox(height: 24),
             ],
           ),
@@ -76,34 +66,7 @@ class _PhotoRegisterScreenState extends State<PhotoRegisterScreen> {
     );
   }
 
-  submit() async {
-    if (formKey.currentState?.validate() != true) {
-      return;
-    }
 
-    reqNo ??= await EnterService().enterIn(
-        reqNo: reqNo,
-        carLicenseNo: carLicenseNo!,
-        ownerName: ownerName,
-        ownerCpNo: ownerCpNo!,
-        paymentType: paymentType);
-
-    await CarCareService().repair(reqNo!, departmentNo, widget.files);
-
-    Navigator.of(context).pop(true);
-    EasyLoading.showSuccess(
-        "${widget.department.departmentName}부서 사진을 등록했습니다.");
-
-  }
-
-  Widget saveButton() {
-    return SizedBox(
-        width: double.infinity,
-        child: FilledButton(
-          onPressed: submit,
-          child: Text("저장", style: TextStyle(fontSize: 16)),
-        ));
-  }
 
   Widget repairType() {
     return FormBuilderChoiceChip(
@@ -139,11 +102,11 @@ class _PhotoRegisterScreenState extends State<PhotoRegisterScreen> {
       initialValue: widget.carCare?.carLicenseNo ?? "",
       textInputAction: TextInputAction.next,
       decoration: InputDecoration(
-        labelText: "차량 번호 및 차종",
+        labelText: "차량 번호",
       ),
       validator: (value) {
         if (value?.isNotEmpty != true) {
-          return "차량 번호 및 차종을 입력하세요";
+          return "차량 번호를 입력하세요";
         }
       },
       onChanged: (value) {
@@ -256,3 +219,4 @@ class _PhotoRegisterScreenState extends State<PhotoRegisterScreen> {
     );
   }
 }
+*/

@@ -22,7 +22,7 @@ class ShopService {
 
   ShopService._() {
     UserService().user.listen((value) {
-      if (value == null) {
+      if (value.isAnonymous) {
         userShop.value = null;
       } else {
         get(value.repairShopNo);

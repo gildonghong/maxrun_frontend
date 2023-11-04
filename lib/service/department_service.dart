@@ -17,7 +17,7 @@ class DepartmentService {
 
   DepartmentService._() {
     UserService().user.listen((value) {
-      if( value == null) {
+      if( !value.isSignedIn ) {
         departments.value = [];
       } else {
         fetch();
@@ -27,7 +27,7 @@ class DepartmentService {
 
 
   late final userDepartment = Rx.combineLatest2(UserService().user, departments, (user, departments) {
-    return departments.firstWhereOrNull((element) => element.departmentNo==user?.departmentNo);
+    return departments.firstWhereOrNull((element) => element.departmentNo==user.departmentNo);
   }).asSubject();
 
   Future<void> fetch() async {
