@@ -53,20 +53,9 @@ class User {
 
   // String mobileYn;
 
-  bool get isAnonymous => workerNo==-2;
   bool get isSignedIn => workerNo!=-2;
   bool get isManager => managerYn=="Y";
 
-  factory User.anonymous() => User(
-      departmentName: "",
-      managerYn: "N",
-      workerNo: -2,
-      loginDate: 0,
-      repairShopNo: -2,
-      uAtoken: "",
-      departmentNo: -2,
-      workerName: "",
-      repairShopName: "");
 
   factory User.fromJson(Map<dynamic, dynamic> json) => User(
         departmentName: json["departmentName"],

@@ -34,7 +34,7 @@ class UserService extends PreferenceAdapter<User> {
   }
 
   void logout() {
-    user.setValue(User.anonymous());
+    user.clear();
   }
 
   @override
