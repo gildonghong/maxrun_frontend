@@ -120,12 +120,7 @@ class AccountScreenModel extends DataGridSource {
         case "휴대폰":
           return form.phone;
         case "ID":
-          return Center(
-            child: Text(
-              e.value,
-              style: TextStyle(),
-            ),
-          );
+          return form.loginId;
         case "PW":
           return form.pw;
         case "직원사용일":

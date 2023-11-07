@@ -20,7 +20,7 @@ class NoticeScreen extends StatefulWidget {
 class _NoticeScreenState extends State<NoticeScreen>
     with AutomaticKeepAliveClientMixin {
   @override
-  bool get wantKeepAlive => true;
+  bool get wantKeepAlive => false;
 
   final model = NoticeScreenModel();
 

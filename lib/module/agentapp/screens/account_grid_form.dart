@@ -1,12 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:photoapp/model/account.dart';
 import 'package:photoapp/model/department.dart';
 import 'package:photoapp/model/user.dart';
 import 'package:photoapp/service/account_service.dart';
 import 'package:photoapp/service/department_service.dart';
+import 'package:photoapp/ui/always_disabled_focus_node.dart';
 import 'package:rxdart/rxdart.dart';
 
 class AccountGridForm {
@@ -16,7 +18,7 @@ class AccountGridForm {
   late Widget position;
   late Widget name;
   late Widget phone;
-  // late Widget loginId;
+  late Widget loginId;
   late Widget pw;
 
   // late Widget workingPhoto;
@@ -91,6 +93,8 @@ class AccountGridForm {
         focusNode: cpNoFocus,
         style: textStyle,
         initialValue: account.cpNo,
+        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9\-]'))],
+        keyboardType: TextInputType.phone,
         onChanged: (value) {
           edited.cpNo = value;
           checkIfChanged();
@@ -98,13 +102,12 @@ class AccountGridForm {
       ),
     );
 
-/*
     loginId = Container(
       alignment: Alignment.center,
       padding: EdgeInsets.symmetric(horizontal: 2),
       child: TextFormField(
         style: textStyle,
-        focusNode: loginIdFocus,
+        focusNode: account.workerNo == 0 ? loginIdFocus : AlwaysDisabledFocusNode(),
         initialValue: account.loginId,
         onChanged: (value) {
           edited.loginId = value;
@@ -113,7 +116,6 @@ class AccountGridForm {
         },
       ),
     );
-*/
 
     pw = Container(
       alignment: Alignment.center,

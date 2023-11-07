@@ -24,7 +24,7 @@ class UserService extends PreferenceAdapter<User> {
   bool get isManager => user.getValue()?.managerYn == "Y";
 
   login(String loginId, String pwd) async {
-      final res = await api.post<Map<String, dynamic>>("/login", queryParameters: {
+      final res = await api.post<Map<String, dynamic>>("/login", data: {
         "loginId": loginId,
         "passwd": pwd,
       });

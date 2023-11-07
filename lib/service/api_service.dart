@@ -31,6 +31,21 @@ final interceptor = InterceptorsWrapper(
     handler.next(e);
   },
   onError: (error, handler) async {
+    if( error.response?.statusCode==302 && error.response?.headers.value("location") != null) {
+      final redirUrl = error.response!.headers.value("location")!;
+      final opts = Options(
+          method: error.requestOptions.method,
+          headers: error.requestOptions.headers);
+
+      final res = await api.request(redirUrl,
+          options: opts,
+          data: error.requestOptions.data,
+          queryParameters: error.requestOptions.queryParameters);
+
+      handler.resolve(res);
+      return;
+    }
+
     var message = "";
     if( error.error is FormatException) {
       final fe = error.error as FormatException;
@@ -57,7 +72,8 @@ class ApiHelper {
     responseType: ResponseType.json,
     receiveDataWhenStatusError: true,
     followRedirects: true,
-    validateStatus: (status) => status == 200,
+    maxRedirects: 10,
+    validateStatus: (status) => status != null && status < 300,
   );
 }
 
