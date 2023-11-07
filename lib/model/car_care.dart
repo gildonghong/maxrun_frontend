@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
+
 CarCare carCareFromJson(String str) => CarCare.fromJson(json.decode(str));
 
 String carCareToJson(CarCare data) => json.encode(data.toJson());
@@ -13,7 +15,7 @@ class CarCare {
   String? ownerCpNo;
   // int workerNo;
   int reqNo;
-  // int regDate;
+  int regDate;
   // int fileGroupNo;
   String? carLicenseNo;
   String paymentType;
@@ -29,7 +31,7 @@ class CarCare {
     required this.ownerCpNo,
     // required this.workerNo,
     required this.reqNo,
-    // required this.regDate,
+    required this.regDate,
     // required this.fileGroupNo,
     required this.carLicenseNo,
     required this.paymentType,
@@ -55,12 +57,16 @@ class CarCare {
     }
   }
 
-  factory CarCare.fromJson(Map<String, dynamic> json) => CarCare(
+  DateTime get regAt => DateTime.fromMillisecondsSinceEpoch(regDate);
+
+  factory CarCare.fromJson(Map<String, dynamic> json) {
+    // debugPrint("yyyyMm:"+(json["yyyyMm"] ?? ""));
+    return CarCare(
     // fileName: json["fileName"],
     ownerCpNo: json["ownerCpNo"] ?? "",
     // workerNo: json["workerNo"],
     reqNo: json["reqNo"],
-    // regDate: json["regDate"],
+    regDate: json["regDate"] ?? DateTime.now().millisecondsSinceEpoch,
     // fileGroupNo: json["fileGroupNo"],
     carLicenseNo: json["carLicenseNo"] ?? "",
     paymentType: json["paymentType"] ?? "",
@@ -71,13 +77,14 @@ class CarCare {
     // departmentNo: json["departmentNo"],
     yyyyMm: json["yyyyMm"] ?? "",
   );
+  }
 
   Map<String, dynamic> toJson() => {
     // "fileName": fileName,
     "ownerCpNo": ownerCpNo,
     // "workerNo": workerNo,
     "reqNo": reqNo,
-    // "regDate": regDate,
+    "regDate": regDate,
     // "fileGroupNo": fileGroupNo,
     "carLicenseNo": carLicenseNo,
     "paymentType": paymentType,

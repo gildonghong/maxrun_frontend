@@ -11,4 +11,7 @@ extension DateTimeExtention on DateTime {
   String get yyyyMMdd{
     return format("yyyy-MM-dd");
   }
+  String get yyyyMM{
+    return format("yyyy-MM");
+  }
 }

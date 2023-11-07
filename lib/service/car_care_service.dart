@@ -33,7 +33,7 @@ class CarCareService {
       "departmentName": "신규등록",
       "carLicenseNo": carLicenseNo,
     });
-    list.value = res.data!.map((e) => CarCare.fromJson(e)).toList();
+    list.value = res.data!.map((e) => CarCare.fromJson(e)).toList()..sort((a, b) => b.reqNo.compareTo(a.reqNo));
   }
 
   Future<int> enterIn({int? reqNo, required String carLicenseNo, String? ownerName, required String ownerCpNo,

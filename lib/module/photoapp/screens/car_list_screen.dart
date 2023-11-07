@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:photoapp/extension/datetime_ext.dart';
 import 'package:photoapp/model/car_care.dart';
 import 'package:photoapp/model/department.dart';
 import 'package:photoapp/model/shop.dart';
@@ -198,13 +199,16 @@ class _CarListScreenState extends State<CarListScreen>with AutomaticKeepAliveCli
               mainAxisSpacing: 4,
               itemsAspectRatio: 0.7,
               items: snapshot.data!,
-              itemGrouper: (CarCare i) => i.yyyyMm.replaceAll("-", "년 ") + "월",
-              headerBuilder: (context, String month) => Container(
+              itemGrouper: (CarCare i) => i.regAt.yyyyMM,
+              headerBuilder: (context, String month) {
+                // debugPrint("month:$month");
+                return Container(
                   alignment: AlignmentDirectional.centerStart,
                   padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-                  child: Text(month,
+                  child: Text(month.replaceAll("-", "년 ") + "월",
                       style: TextStyle(
-                          fontSize: 24, fontWeight: FontWeight.w900))),
+                          fontSize: 24, fontWeight: FontWeight.w900)));
+              },
               gridItemBuilder: (context, int countInGroup, int itemIndexInGroup,
                       CarCare item, int itemIndexInOriginalList) =>
                   listItem(item),
