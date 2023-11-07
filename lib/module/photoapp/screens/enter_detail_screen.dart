@@ -187,7 +187,7 @@ class _EnterDetailScreenState extends State<EnterDetailScreen> {
       return;
     }
 
-    await CarCareService().repair(car.reqNo, department!.departmentNo, images);
+    await CarCareService().repair(car.reqNo, department.departmentNo, images);
     await fetchPhotos();
 
     EasyLoading.showSuccess("${department?.departmentName ?? ''} 사진을 등록했습니다.");
@@ -235,6 +235,11 @@ class _EnterDetailScreenState extends State<EnterDetailScreen> {
               padding: const EdgeInsets.all(24.0),
               child: CachedNetworkImage(
                 imageUrl: p.serverFile,
+                cacheKey: "${p.serverFile}1280",
+                maxWidthDiskCache: 1280,
+                maxHeightDiskCache: 1280,
+                memCacheWidth: 1280,
+                memCacheHeight: 1280,
                 fadeInDuration: Duration(milliseconds: 150),
                 errorWidget: (context, url, error) => Icon(Icons.image_not_supported_rounded),
               ),
@@ -246,7 +251,19 @@ class _EnterDetailScreenState extends State<EnterDetailScreen> {
         Container(
             alignment: Alignment.center,
             color: Colors.black,
-            child: Image(image: NetworkImage(p.serverFile))),
+            child: CachedNetworkImage(
+              imageUrl: p.serverFile,
+              cacheKey: "${p.serverFile}1280",
+              maxWidthDiskCache: 1280,
+              maxHeightDiskCache: 1280,
+              memCacheWidth: 1280,
+              memCacheHeight: 1280,
+              fadeInDuration: Duration(milliseconds: 150),
+              placeholder: (context, url) => Container(
+                alignment: Alignment.center,
+                  child: Center(child: CircularProgressIndicator())),
+              errorWidget: (context, url, error) => Icon(Icons.image_not_supported_rounded),
+            )),
         Container(
           color: Colors.black54,
           padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),

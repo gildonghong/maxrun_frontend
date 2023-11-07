@@ -57,7 +57,7 @@ class AccountService {
         accounts.value = accounts.value..add(account);
       }
     } else{
-      fetch();
+      await fetch();
     }
 
 

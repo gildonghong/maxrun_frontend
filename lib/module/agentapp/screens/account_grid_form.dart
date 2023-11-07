@@ -16,7 +16,7 @@ class AccountGridForm {
   late Widget position;
   late Widget name;
   late Widget phone;
-  late Widget loginId;
+  // late Widget loginId;
   late Widget pw;
 
   // late Widget workingPhoto;
@@ -98,6 +98,7 @@ class AccountGridForm {
       ),
     );
 
+/*
     loginId = Container(
       alignment: Alignment.center,
       padding: EdgeInsets.symmetric(horizontal: 2),
@@ -112,6 +113,7 @@ class AccountGridForm {
         },
       ),
     );
+*/
 
     pw = Container(
       alignment: Alignment.center,

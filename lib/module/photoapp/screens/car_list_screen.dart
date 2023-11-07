@@ -227,9 +227,18 @@ class _CarListScreenState extends State<CarListScreen>with AutomaticKeepAliveCli
           fit: StackFit.expand,
           children: [
             CachedNetworkImage(
-              imageUrl: item.fileSavedPath ?? "",
               fit: BoxFit.cover,
+              cacheKey: (item.fileSavedPath ?? "") + "300",
+              imageUrl: item.fileSavedPath??"",
+              maxWidthDiskCache: 300,
+              maxHeightDiskCache: 300,
+              memCacheWidth: 300,
+              memCacheHeight: 300,
               fadeInDuration: Duration(milliseconds: 150),
+              placeholder: (context, url) => Container(
+                alignment: Alignment.center,
+                  child: Center(child: CircularProgressIndicator())),
+              errorWidget: (context, url, error) => Icon(Icons.image_not_supported_rounded),
               httpHeaders: {
                 "Authorization": "Bearer ${currentUser.uAtoken}",
               },

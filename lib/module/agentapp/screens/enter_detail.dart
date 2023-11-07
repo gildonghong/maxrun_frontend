@@ -193,20 +193,27 @@ class _EnterDetailState extends State<EnterDetail> {
   Widget photoList(Enter enter) {
     return Container(
       width: double.infinity,
-      child: SingleChildScrollView(
-        child: StreamBuilder<List<Photo>>(
+      height: double.infinity,
+      // alignment: Alignment.center,
+      child: StreamBuilder<List<Photo>>(
           stream: photos,
           initialData: [],
-          builder: (context, snapshot) {
-            final photos = snapshot.data ?? [];
-            return Wrap(
+        builder: (context, snapshot) {
+          final photos = snapshot.data ?? [];
+
+          if( photos.isEmpty) {
+            return Center(child: Text(("등록된 사진이 없습니다"), style:TextStyle(fontSize: 20)));
+          }
+
+          return SingleChildScrollView(
+            child: Wrap(
                 alignment: WrapAlignment.start,
                 clipBehavior: Clip.hardEdge,
                 spacing: 8,
                 runSpacing: 8,
-                children: photos.map((e) => photo(e)).toList());
-          },
-        ),
+                children: photos.map((e) => photo(e)).toList()),
+          );
+        }
       ),
     );
   }
@@ -226,8 +233,13 @@ class _EnterDetailState extends State<EnterDetail> {
             Center(
               child: CachedNetworkImage(
                 imageUrl: photo.serverFile,
+                cacheKey: "${photo.serverFile}600",
+                maxWidthDiskCache: 600,
+                maxHeightDiskCache: 600,
+                memCacheWidth: 600,
+                memCacheHeight: 600,
                   fit: BoxFit.contain,
-                placeholder: (context, url) => CircularProgressIndicator(),
+                placeholder: (context, url) => Center(child: CircularProgressIndicator()),
                 errorWidget: (context, url, error) => Icon(Icons.image_not_supported_rounded),),
             ),
             Container(
@@ -252,8 +264,13 @@ class _EnterDetailState extends State<EnterDetail> {
             Navigator.of(context).pop();
           },
             child: CachedNetworkImage(
+              cacheKey: "${url}1920",
+              maxWidthDiskCache: 1920,
+              maxHeightDiskCache: 1920,
+              memCacheWidth: 1920,
+              memCacheHeight: 1920,
               imageUrl: url,
-              placeholder: (context, url) => CircularProgressIndicator(),
+              placeholder: (context, url) => Center(child: CircularProgressIndicator()),
               errorWidget: (context, url, error) => Icon(Icons.image_not_supported_rounded),
             )),
       ),

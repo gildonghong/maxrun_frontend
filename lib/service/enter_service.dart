@@ -77,6 +77,8 @@ class EnterService {
       // "memo": memo,
     }..removeWhere((key, value) => value==null));
 
+    await fetch();
+
     return CarCare.fromJson(res.data!);
 
     /*
