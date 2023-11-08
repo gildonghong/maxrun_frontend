@@ -15,7 +15,13 @@ class AccountService {
   }
 
   AccountService._() {
-    fetch();
+    UserService().user.listen((user) async {
+      if( user==null ) {
+        accounts.value = [];
+      } else {
+        await fetch();
+      }
+    });
   }
 
   final accounts = BehaviorSubject<List<Account>>.seeded([]);
