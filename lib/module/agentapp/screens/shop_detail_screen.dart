@@ -18,8 +18,9 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
   final shopName = TextEditingController();
   final ceoName = TextEditingController();
   final businessNo = TextEditingController();
-  final tel = TextEditingController();
+  final repairShopTelNo = TextEditingController();
   final formKey = GlobalKey<FormState>();
+  var useYn = "Y";
 
   @override
   void initState() {
@@ -29,7 +30,8 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
       shopName.text = value?.repairShopName ?? "";
       ceoName.text = value?.ceoName ?? "";
       businessNo.text = value?.businessNo ?? "";
-      tel.text = value?.repairShopTelNo ?? "";
+      repairShopTelNo.text = value?.repairShopTelNo ?? "";
+      useYn = value?.useYn ?? "Y";
     });
   }
 
@@ -38,7 +40,7 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
     shopName.dispose();
     ceoName.dispose();
     businessNo.dispose();
-    tel.dispose();
+    repairShopTelNo.dispose();
     super.dispose();
   }
 
@@ -97,13 +99,28 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                   decoration: InputDecoration(labelText: "대표번호"),
                   inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9\-]'))],
                   keyboardType: TextInputType.number,
-                  controller: tel,
+                  controller: repairShopTelNo,
                   validator: (value) {
                     if (value?.trim().isNotEmpty != true) {
                       return "대표번호를 입력하세요.";
                     }
                   },
                 ),
+                SizedBox(height: 12),
+                DropdownButtonFormField(
+                  value: useYn,
+                  items: [
+                  DropdownMenuItem(
+                    value: "Y",
+                    child: Text("사용", style:TextStyle()),),
+                  DropdownMenuItem(
+                    value: "N",
+                    child: Text("미사용", style:TextStyle()),),
+                ], onChanged: (value) {
+                    setState(() {
+                      useYn = value ?? useYn;
+                    });
+                },),
                 SizedBox(height: 12),
                 FilledButton(
                   onPressed: () async {
@@ -116,7 +133,8 @@ class _ShopDetailScreenState extends State<ShopDetailScreen> {
                       repairShopName: shopName.text,
                       ceoName: ceoName.text,
                       businessNo: businessNo.text,
-                      repairShopTelNo: tel.text,
+                      repairShopTelNo: repairShopTelNo.text,
+                      useYn: useYn,
                     );
 
                     EasyLoading.showSuccess(shop?.repairShopNo != null

@@ -60,7 +60,8 @@ int? repairShopNo,
         required String repairShopName,
       required String ceoName,
       required String businessNo,
-      required String repairShopTelNo}) async {
+      required String repairShopTelNo,
+      required String useYn}) async {
 
     await api.post("/repairshop", data: {
       "repairShopNo": repairShopNo,
@@ -68,6 +69,7 @@ int? repairShopNo,
       "ceoName": ceoName,
       "businessNo": businessNo,
       "repairShopTelNo": repairShopTelNo,
+      "useYn": useYn,
       // "photoSavedPath":'',
       // "maxrunChargerCpNo":''
     });

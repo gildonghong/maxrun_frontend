@@ -1,5 +1,3 @@
-/// YApi QuickType插件生成，具体参考文档:https://plugins.jetbrains.com/plugin/18847-yapi-quicktype/documentation
-
 import 'dart:convert';
 
 Shop shopFromJson(String str) => Shop.fromJson(json.decode(str));
@@ -19,6 +17,7 @@ class Shop {
         this.businessNo,
         this.ceoName,
         this.repairShopTelNo,
+        required this.useYn,
         // required this.repairShopEmail,
     });
 
@@ -33,6 +32,7 @@ class Shop {
     String? businessNo;
     String? ceoName;
     String? repairShopTelNo;
+    String useYn;
     // String repairShopEmail;
 
     factory Shop.fromJson(Map<dynamic, dynamic> json) => Shop(
@@ -47,6 +47,7 @@ class Shop {
         businessNo: json["businessNo"],
         ceoName: json["ceoName"],
         repairShopTelNo: json["repairShopTelNo"],
+        useYn: json["useYn"]??"Y"
         // repairShopEmail: json["repairShopEmail"],
     );
 
@@ -62,6 +63,7 @@ class Shop {
         businessNo: "",
         ceoName: "",
         repairShopTelNo: "",
+        useYn: "Y",
         // repairShopEmail: json["repairShopEmail"],
     );
 
@@ -77,6 +79,7 @@ class Shop {
         "businessNo": businessNo,
         "ceoName": ceoName,
         "repairShopTelNo": repairShopTelNo,
+        "useYn": useYn,
         // "repairShopEmail": repairShopEmail,
     };
 }
