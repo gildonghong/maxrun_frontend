@@ -4,7 +4,9 @@ import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:gap/gap.dart';
 import 'package:photoapp/extension/datetime_ext.dart';
 import 'package:photoapp/model/enter.dart';
 import 'package:photoapp/model/photo.dart';
@@ -26,10 +28,13 @@ class _EnterDetailState extends State<EnterDetail> {
   Stream<Enter?> get enter => widget.enter;
   final formKey = GlobalKey<FormState>();
   final carLicenseNo = TextEditingController();
+  final ownerName = TextEditingController();
+  final ownerCpNo = TextEditingController();
   late final photos = enter.asyncMap((event) async {
     return event == null
         ? <Photo>[]
-        : await EnterService().getPhotos(event.reqNo, repairShopNo: event.repairShopNo);
+        : await EnterService()
+            .getPhotos(event.reqNo, repairShopNo: event.repairShopNo);
   });
 
   @override
@@ -44,11 +49,9 @@ class _EnterDetailState extends State<EnterDetail> {
     super.initState();
 
     sub = enter.listen((event) {
-      carLicenseNo.text = event?.carLicenseNo??"";
+      carLicenseNo.text = event?.carLicenseNo ?? "";
     });
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -63,19 +66,200 @@ class _EnterDetailState extends State<EnterDetail> {
 
           return Column(
             children: [
-              bar(enter),
-              SizedBox(height: 12),
+              // bar(enter),
+              // SizedBox(heigeht: 12),
               Expanded(flex: 2, child: photoList(enter)),
               SizedBox(height: 12),
-              Expanded(
-                flex: 1,
-                child: memo(enter),
+              SizedBox(
+                height: 300,
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 300,
+                      child: enterInfo(enter),
+                    ),
+                    Gap(8),
+                    Expanded(child: memo(enter)),
+                  ],
+                ),
               ),
             ],
           );
         });
   }
 
+  Widget enterInfo(Enter enter) {
+    return Form(
+      key: formKey,
+      child: InputDecorator(
+        decoration: InputDecoration(
+          labelText: "입고정보",
+        ),
+        child: Column(
+          children: [
+            SizedBox(height: 24),
+            SizedBox(
+              height: 152,
+              child: Row(
+                children: [
+                  Expanded(
+                      flex: 2,
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            controller: carLicenseNo,
+                            onChanged: (value) {
+                              enter.carLicenseNo = value;
+                            },
+                            validator: (value) {
+                              if (value?.trim().isNotEmpty != true) {
+                                return "";
+                              }
+                            },
+                            decoration: InputDecoration(
+                              labelText: "차량번호",
+                              errorStyle: TextStyle(height: 0),
+                            ),
+                          ),
+                          Gap(16),
+                          TextFormField(
+                            controller: ownerName,
+                            onChanged: (value) {
+                              enter.ownerName = value;
+                            },
+                            validator: (value) {
+                              if (value?.trim().isNotEmpty != true) {
+                                return "";
+                              }
+                            },
+                            decoration: InputDecoration(
+                              labelText: "차주 성명",
+                              errorStyle: TextStyle(height: 0),
+                            ),
+                          ),
+                          Gap(16),
+                          TextFormField(
+                            controller: ownerCpNo,
+                            keyboardType: TextInputType.phone,
+                            inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9\-]'))],
+                            onChanged: (value) {
+                              enter.ownerCpNo = value;
+                            },
+                            validator: (value) {
+                              if (value?.trim().isNotEmpty != true) {
+                                return "";
+                              }
+                            },
+                            decoration: InputDecoration(
+                              labelText: "차주 연락처",
+                              errorStyle: TextStyle(height: 0),
+                            ),
+                          )
+                        ],
+                      )),
+                  Gap(8),
+                  Expanded(
+                    flex: 1,
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: FilledButton(
+                              onPressed: null,
+                              // onPressed: enter.maxrunTalkYn
+                              //     ? null
+                              //     : () async {
+                              //         final result =
+                              //             await EnterService().postChemicalRequestMessage(enter);
+                              //         EasyLoading.showSuccess(
+                              //             result ? "케미컬 청구를 신청했습니다." : "오류가 발생했습니다.");
+                              //       },
+                              child: Text(
+                                  enter.maxrunTalkYn
+                                      ? "케미컬 청구\n신청 완료"
+                                      : "케미컬\n청구 신청",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle()),
+                            ),
+                          ),
+                        ),
+                        Gap(8),
+                        Expanded(
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: FilledButton(
+                              onPressed: enter.customerTalkYn
+                                  ? null
+                                  : () async {
+                                      if (enter.ownerCpNo?.isNotEmpty != true) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                          duration: Duration(seconds: 2),
+                                          backgroundColor: Colors.red[800]!,
+                                          content: Text("차주 연락처가 없습니다.",
+                                              style: TextStyle()),
+                                        ));
+                                        return;
+                                      }
+                                      final result = await EnterService()
+                                          .postRepairCompleteMessage(enter);
+                                      EasyLoading.showSuccess(result
+                                          ? "작업완료 알림톡을 발송했습니다."
+                                          : "오류가 발생했습니다.");
+                                    },
+                              child: Text(
+                                enter.customerTalkYn
+                                    ? "작업완료\n알림톡\n신청완료"
+                                    : "작업완료\n알림톡 발송",
+                                style: TextStyle(),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Spacer(),
+            Row(
+              children: [
+                Expanded(
+                  child: FilledButton(
+                    onPressed: () async {
+                      if (formKey.currentState?.validate() == true) {
+                        await EnterService().enterIn(
+                            reqNo: enter.reqNo,
+                            carLicenseNo: enter.carLicenseNo,
+                            ownerName: enter.ownerName,
+                        ownerCpNo: enter.ownerCpNo);
+                        EasyLoading.showSuccess("입고정보를 수정했습니다.");
+                      }
+                    },
+                    child: Text("입고정보 수정", style: TextStyle()),
+                  ),
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  child: FilledButton(
+                    style: FilledButton.styleFrom(
+                        backgroundColor: Colors.red[800]),
+                    onPressed: () async {
+                      deleteDialog(enter);
+                    },
+                    child: Text("입고정보 삭제", style: TextStyle()),
+                  ),
+                )
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget bar(Enter enter) {
     return Container(
@@ -125,14 +309,15 @@ class _EnterDetailState extends State<EnterDetail> {
           ),
           Spacer(),
           FilledButton(
-            onPressed: enter.maxrunTalkYn
-                ? null
-                : () async {
-                    final result =
-                        await EnterService().postChemicalRequestMessage(enter);
-                    EasyLoading.showSuccess(
-                        result ? "케미컬 청구를 신청했습니다." : "오류가 발생했습니다.");
-                  },
+            onPressed: null,
+            // onPressed: enter.maxrunTalkYn
+            //     ? null
+            //     : () async {
+            //         final result =
+            //             await EnterService().postChemicalRequestMessage(enter);
+            //         EasyLoading.showSuccess(
+            //             result ? "케미컬 청구를 신청했습니다." : "오류가 발생했습니다.");
+            //       },
             child: Text(enter.maxrunTalkYn ? "케미컬 청구신청 완료" : "케미컬 청구신청",
                 style: TextStyle()),
           ),
@@ -198,23 +383,24 @@ class _EnterDetailState extends State<EnterDetail> {
       child: StreamBuilder<List<Photo>>(
           stream: photos,
           initialData: [],
-        builder: (context, snapshot) {
-          final photos = snapshot.data ?? [];
+          builder: (context, snapshot) {
+            final photos = snapshot.data ?? [];
 
-          if( photos.isEmpty) {
-            return Center(child: Text(("등록된 사진이 없습니다"), style:TextStyle(fontSize: 20)));
-          }
+            if (photos.isEmpty) {
+              return Center(
+                  child:
+                      Text(("등록된 사진이 없습니다"), style: TextStyle(fontSize: 20)));
+            }
 
-          return SingleChildScrollView(
-            child: Wrap(
-                alignment: WrapAlignment.start,
-                clipBehavior: Clip.hardEdge,
-                spacing: 8,
-                runSpacing: 8,
-                children: photos.map((e) => photo(e)).toList()),
-          );
-        }
-      ),
+            return SingleChildScrollView(
+              child: Wrap(
+                  alignment: WrapAlignment.start,
+                  clipBehavior: Clip.hardEdge,
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: photos.map((e) => photo(e)).toList()),
+            );
+          }),
     );
   }
 
@@ -238,15 +424,22 @@ class _EnterDetailState extends State<EnterDetail> {
                 maxHeightDiskCache: 600,
                 memCacheWidth: 600,
                 memCacheHeight: 600,
-                  fit: BoxFit.contain,
-                placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                errorWidget: (context, url, error) => Icon(Icons.image_not_supported_rounded),),
+                fit: BoxFit.contain,
+                placeholder: (context, url) =>
+                    Center(child: CircularProgressIndicator()),
+                errorWidget: (context, url, error) =>
+                    Icon(Icons.image_not_supported_rounded),
+              ),
             ),
             Container(
               width: 300,
               color: Colors.black.withOpacity(0.5),
-              child: Text(photo.clientFileName,
-                  textAlign: TextAlign.center, style: TextStyle(color: Colors.white), softWrap: true,),
+              child: Text(
+                photo.clientFileName,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white),
+                softWrap: true,
+              ),
             ),
           ],
         ),
@@ -260,9 +453,9 @@ class _EnterDetailState extends State<EnterDetail> {
       builder: (context) => AlertDialog(
         contentPadding: EdgeInsets.zero,
         content: InkWell(
-          onTap: () {
-            Navigator.of(context).pop();
-          },
+            onTap: () {
+              Navigator.of(context).pop();
+            },
             child: CachedNetworkImage(
               cacheKey: "${url}1920",
               maxWidthDiskCache: 1920,
@@ -270,8 +463,10 @@ class _EnterDetailState extends State<EnterDetail> {
               memCacheWidth: 1920,
               memCacheHeight: 1920,
               imageUrl: url,
-              placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-              errorWidget: (context, url, error) => Icon(Icons.image_not_supported_rounded),
+              placeholder: (context, url) =>
+                  Center(child: CircularProgressIndicator()),
+              errorWidget: (context, url, error) =>
+                  Icon(Icons.image_not_supported_rounded),
             )),
       ),
     );
@@ -401,24 +596,41 @@ class _EnterDetailState extends State<EnterDetail> {
               },
             ),
           ),
-          TextFormField(
-            controller: memoTextController,
-            onEditingComplete: () async {
-              await EnterService().addMemo(enter, memoTextController.text);
-              memoTextController.text = '';
-            },
-            decoration: InputDecoration(
-                suffixIcon: Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: FilledButton(
-                style: FilledButton.styleFrom(padding: EdgeInsets.zero),
-                onPressed: () async {
-                  await EnterService().addMemo(enter, memoTextController.text);
-                  memoTextController.text = '';
-                },
-                child: Text("추가", style: TextStyle()),
-              ),
-            )),
+          Form(
+            child: TextFormField(
+              controller: memoTextController,
+              onEditingComplete: () async {
+                await EnterService().addMemo(enter, memoTextController.text);
+                memoTextController.text = '';
+              },
+              validator: (value) {
+                if (value?.trim().isNotEmpty != true) {
+                  return "";
+                }
+              },
+              decoration: InputDecoration(
+                  errorStyle: TextStyle(height: 0),
+                  suffixIcon: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: SizedBox(
+                      width: 80,
+                      child: FilledButton(
+                        style: FilledButton.styleFrom(padding: EdgeInsets.zero),
+                        onPressed: () async {
+                          if( memoTextController.text.isEmpty) {
+                            EasyLoading.showError("메모 내용을 입력하세요.");
+                            return;
+                          }
+
+                          await EnterService()
+                              .addMemo(enter, memoTextController.text);
+                          memoTextController.text = '';
+                        },
+                        child: Text("메모 추가", style: TextStyle()),
+                      ),
+                    ),
+                  )),
+            ),
           )
         ],
       ),
@@ -426,8 +638,6 @@ class _EnterDetailState extends State<EnterDetail> {
   }
 
   final memoTextController = TextEditingController();
-
-
 
   Widget maker() {
     return DropdownButtonFormField(
