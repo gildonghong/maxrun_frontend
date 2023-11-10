@@ -50,6 +50,8 @@ class _EnterDetailState extends State<EnterDetail> {
 
     sub = enter.listen((event) {
       carLicenseNo.text = event?.carLicenseNo ?? "";
+      ownerName.text = event?.ownerName??"";
+      ownerCpNo.text = event?.ownerCpNo??"";
     });
   }
 
