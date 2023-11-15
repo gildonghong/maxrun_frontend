@@ -85,7 +85,7 @@ class _EnterRegisterPopupState extends State<EnterFormScreen> {
         reqNo: reqNo,
         carLicenseNo: carLicenseNo!,
         ownerName: ownerName,
-        ownerCpNo: ownerCpNo!,
+        ownerCpNo: ownerCpNo,
         paymentType: paymentType);
 
     EasyLoading.showSuccess(reqNo==null?"입고 등록을 완료했습니다.":"입고 내역을 수정했습니다.");
@@ -109,11 +109,11 @@ class _EnterRegisterPopupState extends State<EnterFormScreen> {
         alignment: WrapAlignment.center,
         initialValue: car?.paymentType,
         name: "payment",
-        validator: (value) {
-          if (UserService().isManager && value == null) {
-            return "수리구분을 선택하세요.";
-          }
-        },
+        // validator: (value) {
+        //   if (UserService().isManager && value == null) {
+        //     return "수리구분을 선택하세요.";
+        //   }
+        // },
         onChanged: (value) {
           setState(() {
             paymentType = value;
@@ -155,11 +155,11 @@ class _EnterRegisterPopupState extends State<EnterFormScreen> {
       initialValue: car?.ownerName ?? "",
       textInputAction: TextInputAction.next,
       decoration: InputDecoration(labelText: "차주 성명"),
-      validator: (value) {
-        if (UserService().isManager && value?.isNotEmpty != true) {
-          return "차주 성명을 입력하세요.";
-        }
-      },
+      // validator: (value) {
+      //   if (UserService().isManager && value?.isNotEmpty != true) {
+      //     return "차주 성명을 입력하세요.";
+      //   }
+      // },
       onChanged: (value) {
         ownerName = value;
       },
@@ -173,11 +173,11 @@ class _EnterRegisterPopupState extends State<EnterFormScreen> {
       inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9\-]'))],
       keyboardType: TextInputType.phone,
       decoration: InputDecoration(labelText: "차주 연락처"),
-      validator: (value) {
-        if (value?.isNotEmpty != true) {
-          return "차주 연락처를 입력하세요";
-        }
-      },
+      // validator: (value) {
+      //   if (value?.isNotEmpty != true) {
+      //     return "차주 연락처를 입력하세요";
+      //   }
+      // },
       onChanged: (value) {
         ownerCpNo = value;
       },

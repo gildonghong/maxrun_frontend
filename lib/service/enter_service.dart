@@ -7,6 +7,7 @@ import 'package:photoapp/model/car_care.dart';
 import 'package:photoapp/model/enter.dart';
 import 'package:photoapp/model/memo.dart';
 import 'package:photoapp/model/photo.dart';
+import 'package:photoapp/service/car_care_service.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'api_service.dart';
@@ -78,6 +79,7 @@ class EnterService {
     }..removeWhere((key, value) => value==null));
 
     await fetch();
+    await CarCareService().fetch();
 
     return CarCare.fromJson(res.data!);
 
