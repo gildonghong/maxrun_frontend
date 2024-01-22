@@ -12,10 +12,12 @@ String carCareToJson(CarCare data) => json.encode(data.toJson());
 
 class CarCare {
   // String fileName;
+  int rowNum;
+  int totalCount;
   String? ownerCpNo;
   // int workerNo;
   int reqNo;
-  int regDate;
+  int enterInDate;
   // int fileGroupNo;
   String? carLicenseNo;
   String paymentType;
@@ -28,10 +30,12 @@ class CarCare {
 
   CarCare({
     // required this.fileName,
+    required this.rowNum,
+    required this.totalCount,
     required this.ownerCpNo,
     // required this.workerNo,
     required this.reqNo,
-    required this.regDate,
+    required this.enterInDate,
     // required this.fileGroupNo,
     required this.carLicenseNo,
     required this.paymentType,
@@ -57,16 +61,18 @@ class CarCare {
     }
   }
 
-  DateTime get regAt => DateTime.fromMillisecondsSinceEpoch(regDate);
+  DateTime get enteredAt => DateTime.fromMillisecondsSinceEpoch(enterInDate);
 
   factory CarCare.fromJson(Map<String, dynamic> json) {
     // debugPrint("yyyyMm:"+(json["yyyyMm"] ?? ""));
     return CarCare(
     // fileName: json["fileName"],
+    rowNum: json["rowNum"] ?? 0,
+      totalCount: json["totalCount"] ?? 0,
     ownerCpNo: json["ownerCpNo"] ?? "",
     // workerNo: json["workerNo"],
     reqNo: json["reqNo"],
-    regDate: json["regDate"] ?? DateTime.now().millisecondsSinceEpoch,
+    enterInDate: json["enterInDate"] ?? DateTime.now().millisecondsSinceEpoch,
     // fileGroupNo: json["fileGroupNo"],
     carLicenseNo: json["carLicenseNo"] ?? "",
     paymentType: json["paymentType"] ?? "",
@@ -81,10 +87,12 @@ class CarCare {
 
   Map<String, dynamic> toJson() => {
     // "fileName": fileName,
+    "rowNum": rowNum,
+    "totalCount": totalCount,
     "ownerCpNo": ownerCpNo,
     // "workerNo": workerNo,
     "reqNo": reqNo,
-    "regDate": regDate,
+    "enterInDate": enterInDate,
     // "fileGroupNo": fileGroupNo,
     "carLicenseNo": carLicenseNo,
     "paymentType": paymentType,

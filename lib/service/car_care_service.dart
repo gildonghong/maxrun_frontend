@@ -16,6 +16,8 @@ class CarCareService {
   }
 
   final list = BehaviorSubject<List<CarCare>>.seeded([]);
+  var loading = false;
+  String? carLicenseNo;
 
   CarCareService._() {
     // UserService().user.listen((value) {
@@ -27,20 +29,40 @@ class CarCareService {
     // });
   }
 
-  fetch([String? carLicenseNo]) async {
-    final res = await api.get<List<dynamic>>("/repairshop/carcare/list",
-        queryParameters: {
-      "departmentName": "신규등록",
-      "carLicenseNo": carLicenseNo,
-    });
-    list.value = res.data!.map((e) => CarCare.fromJson(e)).toList()..sort((a, b) => b.reqNo.compareTo(a.reqNo));
+  fetch() async {
+    if (loading) {
+      return;
+    }
+
+    loading = true;
+
+    try {
+      final res = await api.get<List<dynamic>>("/repairshop/carcare/list",
+          queryParameters: {
+            "departmentName": "신규등록",
+            "carLicenseNo": carLicenseNo,
+            "rowNum": 1,
+          }..removeWhere((key, value) => value == null));
+
+      final fetchedList = res.data!.map((e) => CarCare.fromJson(e)).toList()
+        // ..sort((a, b) => b.reqNo.compareTo(a.reqNo))
+      ;
+
+      list.value = fetchedList;
+    } catch (e) {}
+
+    loading = false;
   }
 
-  Future<int> enterIn({int? reqNo, required String carLicenseNo, String? ownerName, required String ownerCpNo,
+  Future<int> enterIn(
+      {int? reqNo,
+      required String carLicenseNo,
+      String? ownerName,
+      required String ownerCpNo,
       String? paymentType}) async {
     final res = await api
         .post<Map<String, dynamic>>("/repairshop/carcare/enterin", data: {
-          "reqNo":reqNo,
+      "reqNo": reqNo,
       "carLicenseNo": carLicenseNo,
       "ownerName": ownerName,
       "ownerCpNo": ownerCpNo,
@@ -69,9 +91,37 @@ class CarCareService {
       //     MultipartFile.fromStream(file.openRead, await file.length())));
     }
 
-    await api
-        .post<int>("/repairshop/carcare/repair", data: data);
+    await api.post<int>("/repairshop/carcare/repair", data: data);
 
     await fetch();
+  }
+
+  Future<void> loadMore() async {
+    if (loading || list.value.isEmpty) {
+      return;
+    }
+    if (list.value.last.rowNum == list.value.last.totalCount) {
+      return;
+    }
+
+    loading = true;
+
+    try {
+      final res = await api.get<List<dynamic>>("/repairshop/carcare/list",
+          queryParameters: {
+            "departmentName": "신규등록",
+            "carLicenseNo": carLicenseNo,
+            "rowNum": list.value.last.rowNum+1,
+          }..removeWhere((key, value) => value == null));
+
+      final fetchedList = res.data!.map((e) => CarCare.fromJson(e)).toList()
+        // ..sort((a, b) => b.reqNo.compareTo(a.reqNo))
+      ;
+
+      list.value = list.value..addAll(fetchedList);
+    } catch (e) {}
+
+    loading = false;
+
   }
 }

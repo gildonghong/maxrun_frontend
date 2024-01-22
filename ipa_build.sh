@@ -1,0 +1,1 @@
+flutter build ipa -t ./lib/module/photoapp/photoapp_main.dart

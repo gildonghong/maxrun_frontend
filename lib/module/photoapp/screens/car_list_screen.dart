@@ -1,21 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_debounce/easy_debounce.dart';
+import 'package:easy_debounce/easy_throttle.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:loadmore/loadmore.dart';
 import 'package:photoapp/extension/datetime_ext.dart';
 import 'package:photoapp/model/car_care.dart';
-import 'package:photoapp/model/department.dart';
-import 'package:photoapp/model/shop.dart';
-import 'package:photoapp/model/user.dart';
 import 'package:photoapp/module/photoapp/photo_app.dart';
 import 'package:photoapp/module/photoapp/screens/enter_detail_screen.dart';
 import 'package:photoapp/module/photoapp/screens/enter_form_screen.dart';
-import 'package:photoapp/module/photoapp/screens/photo_register_screen.dart';
 import 'package:photoapp/service/car_care_service.dart';
 import 'package:photoapp/service/department_service.dart';
 import 'package:photoapp/service/shop_service.dart';
 import 'package:photoapp/service/user_service.dart';
 import 'package:simple_grouped_listview/simple_grouped_listview.dart';
-import 'package:collection/collection.dart';
 
 class CarListScreen extends StatefulWidget {
   const CarListScreen({super.key});
@@ -26,17 +24,36 @@ class CarListScreen extends StatefulWidget {
 
 class _CarListScreenState extends State<CarListScreen>with AutomaticKeepAliveClientMixin {
   final searchController = TextEditingController();
+  final scrollController = ScrollController();
+  // ignore: prefer_function_declarations_over_variables
+  late final scrollListener = (){
+    if(scrollController.position.extentAfter < 450){
+      debugPrint("scrollListener");
+      EasyThrottle.throttle(
+          'car-list-paging',
+          Duration(milliseconds: 300),
+          () {
+            debugPrint("throttle");
+            CarCareService().loadMore();
+          },
+      );
+    }
+  };
 
   @override
   void initState() {
     super.initState();
     CarCareService().fetch();
+    scrollController.addListener(scrollListener);
   }
 
   @override
   void dispose() {
     super.dispose();
     searchController.dispose();
+    EasyThrottle.cancel('car-list-paging');
+    scrollController.removeListener(scrollListener);
+    scrollController.dispose();
   }
 
   @override
@@ -67,7 +84,8 @@ class _CarListScreenState extends State<CarListScreen>with AutomaticKeepAliveCli
                       textAlign: TextAlign.center,
                       textInputAction: TextInputAction.search,
                       onEditingComplete: () {
-                        CarCareService().fetch(searchController.text);
+                        CarCareService().carLicenseNo=  searchController.text;
+                        CarCareService().fetch();
                         FocusScope.of(context).unfocus();
                       },
                       decoration: InputDecoration(
@@ -81,7 +99,8 @@ class _CarListScreenState extends State<CarListScreen>with AutomaticKeepAliveCli
                               size: 24,
                             ),
                             onPressed: () {
-                              CarCareService().fetch(searchController.text);
+                              CarCareService().carLicenseNo=  searchController.text;
+                              CarCareService().fetch();
                               FocusScope.of(context).unfocus();
                             },
                           ),
@@ -178,14 +197,16 @@ class _CarListScreenState extends State<CarListScreen>with AutomaticKeepAliveCli
   Widget list() {
     return RefreshIndicator(
       onRefresh: () async {
-        await CarCareService().fetch(searchController.text);
+        CarCareService().carLicenseNo=  searchController.text;
+        await CarCareService().fetch();
         return;
       },
       child: StreamBuilder<List<CarCare>>(
           stream: CarCareService().list,
           initialData: [],
           builder: (context, snapshot) {
-            if (snapshot.data!.isEmpty) {
+            final list = snapshot.data!;
+            if (list.isEmpty) {
               return Padding(
                 padding: const EdgeInsets.only(top: 40.0),
                 child: Text("검색결과가 없습니다.", style: TextStyle(fontSize: 20)),
@@ -194,12 +215,14 @@ class _CarListScreenState extends State<CarListScreen>with AutomaticKeepAliveCli
 
             return GroupedListView.grid(
               shrinkWrap: false,
+              controller: scrollController,
               padding: EdgeInsets.symmetric(horizontal: 12),
               crossAxisSpacing: 4,
               mainAxisSpacing: 4,
               itemsAspectRatio: 0.7,
               items: snapshot.data!,
-              itemGrouper: (CarCare i) => i.regAt.yyyyMM,
+              // itemGrouper: (CarCare i) => i.enterInDate.yyyyMM,
+              itemGrouper: (CarCare i) => i.enteredAt.yyyyMM,
               headerBuilder: (context, String month) {
                 // debugPrint("month:$month");
                 return Container(
